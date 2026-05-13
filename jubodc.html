@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TMS App — Case Study</title>
+  <title>JuboDC Scheduling & Records Redesign — Case Study</title>
   <style>
     @font-face {
       font-family: 'PP Mori';
@@ -80,6 +80,7 @@
       line-height: 1.7;
     }
 
+    /* ── NAV ── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -129,6 +130,7 @@
     }
     .nav-resume:hover { border-color: #ccc !important; color: var(--text) !important; }
 
+    /* ── SCROLL PROGRESS ── */
     .scroll-progress {
       position: fixed;
       top: 52px; left: 0;
@@ -139,6 +141,7 @@
       transition: width 0.08s linear;
     }
 
+    /* ── LAYOUT ── */
     .page-wrap {
       max-width: 1100px;
       margin: 0 auto;
@@ -149,6 +152,7 @@
       padding-top: 52px;
     }
 
+    /* ── SIDEBAR ── */
     .sidebar {
       position: sticky;
       top: 52px;
@@ -218,10 +222,15 @@
     .nav-item.active a,
     .nav-item:hover a { color: var(--text); }
 
+    /* ── MAIN ── */
     .main {
       flex: 1;
       min-width: 0;
       padding: 52px clamp(24px, 5vw, 72px) 120px clamp(24px, 4vw, 56px);
+    }
+
+    .text-col {
+      max-width: min(660px, 100%);
     }
 
     .section {
@@ -286,7 +295,7 @@
 
     .meta-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 24px;
       margin: 36px 0 40px;
       max-width: 100%;
@@ -386,21 +395,56 @@
     }
     .img-grid-2 .img-placeholder { aspect-ratio: 4/3; }
 
-    .img-grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      margin: 28px 0;
-      max-width: 100%;
-    }
-    .img-grid-3 .img-placeholder { aspect-ratio: 9/16; }
-
     .img-wide {
       max-width: 100%;
       margin: 28px 0;
     }
     .img-wide .img-placeholder { aspect-ratio: 16/7; }
 
+    /* ── Design Solution items ── */
+    .solution-item {
+      margin-top: 52px;
+      padding-top: 52px;
+      border-top: 1px solid var(--border);
+    }
+    .solution-item:first-of-type { margin-top: 32px; padding-top: 0; border-top: none; }
+    .solution-number {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .solution-title {
+      font-size: clamp(16px, 1.5vw, 21px);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-bottom: 16px;
+    }
+    .solution-desc {
+      font-size: clamp(13px, 1vw, 15px);
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 28px;
+      max-width: 640px;
+    }
+    .gif-demo {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      margin-top: 4px;
+    }
+    .gif-demo img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+    }
+
+    /* ── PROJECT HEADER ── */
     .project-header {
       padding-bottom: 20px;
       margin-bottom: 0;
@@ -460,6 +504,7 @@
       max-width: none;
     }
 
+    /* ── PULL QUOTE ── */
     .pull-quote {
       border-left: 2px solid var(--text);
       margin: 32px 0;
@@ -483,6 +528,7 @@
       font-style: normal;
     }
 
+    /* ── KEY POINT ── */
     .key-point {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -507,52 +553,103 @@
       margin: 0;
       max-width: none;
     }
-
-    /* ── FEATURE BLOCK ── */
-    /* ── Design Solution items ── */
-    .solution-item {
-      margin-top: 52px;
-      padding-top: 52px;
-      border-top: 1px solid var(--border);
+    .key-point p + p {
+      margin-top: 10px;
     }
-    .solution-item:first-of-type { margin-top: 32px; padding-top: 0; border-top: none; }
-    .solution-number {
-      font-size: 11px;
-      font-weight: 600;
+
+    /* ── USER STORY ── */
+    .user-story {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .us-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .us-body {}
+    .us-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .us-need {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+    .us-need strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── PAIN POINTS ── */
+    .pain-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .pain-point {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      position: relative;
+    }
+    .pain-point::before {
+      content: '!';
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      text-align: center;
+    }
+    .pp-label {
+      display: block;
+      font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 8px;
     }
-    .solution-title {
-      font-size: clamp(16px, 1.5vw, 21px);
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.25;
-      letter-spacing: -0.015em;
-      margin-bottom: 16px;
-    }
-    .solution-desc {
-      font-size: clamp(13px, 1vw, 15px);
-      line-height: 1.75;
-      color: var(--muted);
-      margin-bottom: 28px;
-      max-width: 640px;
-    }
-    .gif-demo {
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--surface);
-      margin-top: 4px;
-    }
-    .gif-demo img {
-      width: 100%;
-      display: block;
-      border-radius: 12px;
+    .pain-point p {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      padding-right: 24px;
+      max-width: none;
     }
 
-    .hero-image { margin: 28px 0 0; }
+    .hero-image {
+      margin: 28px 0 0;
+    }
     .hero-image .img-placeholder {
       aspect-ratio: 16/9;
       border-radius: 12px;
@@ -563,7 +660,10 @@
       padding: 16px 20px;
     }
 
-    .next-project { margin-top: 52px; }
+    /* ── NEXT PROJECT CARD ── */
+    .next-project {
+      margin-top: 52px;
+    }
     .next-project-label {
       font-size: clamp(11px, 0.9vw, 12px);
       letter-spacing: 0.14em;
@@ -603,7 +703,11 @@
       gap: 16px;
       border-top: 1px solid var(--border);
     }
-    .next-project-body { display: flex; flex-direction: column; gap: 5px; }
+    .next-project-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
     .next-project-title {
       font-size: clamp(15px, 1.3vw, 18px);
       font-weight: 500;
@@ -611,7 +715,11 @@
       letter-spacing: -0.01em;
       line-height: 1.2;
     }
-    .next-project-desc { font-size: 13px; color: var(--mid); line-height: 1.5; }
+    .next-project-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
     .next-project-meta {
       display: flex;
       align-items: center;
@@ -619,7 +727,11 @@
       flex-wrap: wrap;
       margin-top: 6px;
     }
-    .next-project-year { font-size: 11px; color: var(--muted); padding-left: 2px; }
+    .next-project-year {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 2px;
+    }
     .next-project-arrow {
       font-size: 18px;
       color: var(--muted);
@@ -631,6 +743,7 @@
       transform: translateX(4px);
     }
 
+    /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 28px clamp(24px, 5vw, 72px);
@@ -699,23 +812,34 @@
       .footer-contact { gap: 16px; }
     }
 
+    /* ── TABLET ── */
     @media (max-width: 1024px) {
       :root { --sidebar-w: 180px; }
       .main { padding: 44px 40px 100px 40px; }
+      .meta-grid { grid-template-columns: repeat(3, 1fr); }
     }
+
+    /* ── MOBILE ── */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .main { margin-left: 0; padding: 28px 24px 80px; }
-      .project-header-top { flex-direction: column; gap: 12px; }
+      .main {
+        padding: 28px 24px 80px;
+      }
+      .project-header-top {
+        flex-direction: column;
+        gap: 12px;
+      }
       .project-header-right { justify-content: flex-start; }
       .meta-grid { grid-template-columns: repeat(2, 1fr); }
-      .img-grid-2, .img-grid-3 { grid-template-columns: 1fr; }
+      .img-grid-2 { grid-template-columns: 1fr; }
       footer { margin-left: 0; padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
     }
+
     @media (max-width: 480px) {
       h1 { font-size: 24px; }
       h2 { font-size: 16px; }
       p  { font-size: 14px; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -723,6 +847,7 @@
 
 <div class="scroll-progress" id="scrollProgress"></div>
 
+<!-- NAV -->
 <nav id="mainNav">
   <div class="nav-inner">
     <a href="index.html" class="nav-name">Sophie Lee</a>
@@ -737,6 +862,7 @@
 <div class="page-wrap">
 <div class="layout">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="back-link">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -746,7 +872,7 @@
     </a>
     <div class="sidebar-meta">
       <div class="sidebar-label">Case Study</div>
-      <div class="sidebar-title">TMS App</div>
+      <div class="sidebar-title">JuboDC Scheduling & Records</div>
     </div>
 
     <ul class="nav-list" id="navList">
@@ -758,17 +884,21 @@
         <div class="nav-dot"></div>
         <a href="#background">Background</a>
       </li>
+      <li class="nav-item" data-section="problem">
+        <div class="nav-dot"></div>
+        <a href="#problem">Problem</a>
+      </li>
       <li class="nav-item" data-section="research">
         <div class="nav-dot"></div>
         <a href="#research">Research</a>
       </li>
-      <li class="nav-item" data-section="design">
+      <li class="nav-item" data-section="insight">
         <div class="nav-dot"></div>
-        <a href="#design">Design Process</a>
+        <a href="#insight">Insight</a>
       </li>
-      <li class="nav-item" data-section="features">
+      <li class="nav-item" data-section="solution">
         <div class="nav-dot"></div>
-        <a href="#features">Features</a>
+        <a href="#solution">Solution</a>
       </li>
       <li class="nav-item" data-section="reflection">
         <div class="nav-dot"></div>
@@ -777,57 +907,63 @@
     </ul>
   </aside>
 
+  <!-- MAIN CONTENT -->
   <main class="main">
 
     <!-- PROJECT HEADER -->
     <div class="project-header">
       <div class="project-header-top">
         <div class="project-header-name">
-          TMS App — Driver Experience
-          <a href="case-study.html" title="Next Project">→</a>
+          JuboDC — Scheduling &amp; Records Redesign
+          <a href="tms-app.html" title="Next Project">→</a>
         </div>
         <div class="project-header-right">
-          <span class="tag">Mobile Design</span>
-          <span class="tag">0-to-1</span>
-          <span class="tag">Logistics</span>
-          <span class="project-year">2023</span>
+          <span class="tag">UX Research</span>
+          <span class="tag">Product Design</span>
+          <span class="tag">B2B Healthcare</span>
+          <span class="project-year">2024</span>
         </div>
       </div>
-      <p class="project-subtitle">Empowering small-logistics drivers to record delivery progress on the go — without stopping, without paper, without losing track.</p>
+      <p class="project-subtitle">Redesigning a high-frequency healthcare admin module so clinic staff spend less time on paperwork — and more time on care.</p>
     </div>
 
+    <!-- HERO IMAGE -->
     <div class="hero-image">
-      <img src="assets/images/3d-hero.png"
-           alt="TMS App — delivery management interface overview"
+      <img src="assets/images/jb-hero.jpg"
+           alt="JuboDC — scheduling module redesign overview"
            style="width:100%; border-radius:12px;" />
     </div>
 
     <!-- OVERVIEW -->
     <section class="section" id="overview">
 
-      <h1>Designing a logistics app for drivers who can't stop to use it — built around the constraints of driving, hauling goods, and working under unpredictable light.</h1>
+      <h1>Shifted a daily-use healthcare module from reactive record-keeping to proactive planning — reducing scheduling overhead for 30+ institutions across Taiwan.</h1>
 
       <div class="callout">
-        <div class="callout-label">Design Challenge</div>
-        <p>The most critical phase of building this app wasn't the feature set — it was understanding the moment of use. Drivers are in motion, handling goods, managing daylight glare and nighttime screen brightness, all while trying to stay safe. The design had to work within those constraints, not around them.</p>
+        <div class="callout-label">Context</div>
+        <p>The most-used feature in the system was also the most painful. The fix wasn't a UI refresh — it was rethinking the entire workflow from scratch.</p>
       </div>
 
       <div class="meta-grid">
         <div>
           <div class="meta-label">Role</div>
-          <div class="meta-value">UI/UX Designer<br>Internship</div>
+          <div class="meta-value">UX Designer</div>
         </div>
         <div>
           <div class="meta-label">Timeline</div>
-          <div class="meta-value">2 months</div>
+          <div class="meta-value">5 months</div>
         </div>
         <div>
           <div class="meta-label">Team</div>
           <div class="meta-value">PM · Front-end Engineer · Back-end Engineer</div>
         </div>
         <div>
-          <div class="meta-label">Company</div>
-          <div class="meta-value">3drens Inc.<br>SaaS Logistics Platform</div>
+          <div class="meta-label">Tools</div>
+          <div class="meta-value">Figma · User Interviews · Prototype Testing · FigJam</div>
+        </div>
+        <div>
+          <div class="meta-label">Client</div>
+          <div class="meta-value">Jubo DC (B2B Healthcare Platform)</div>
         </div>
       </div>
 
@@ -836,136 +972,152 @@
     <!-- BACKGROUND -->
     <section class="section" id="background">
       <div class="section-label">Background</div>
-      <h2>From paper records to real-time visibility</h2>
+      <h2>A product used every single day — and slowly breaking under its own weight</h2>
 
-      <p>3drens Inc. is a SaaS company building logistics management tools for small and medium-sized logistics companies in Taiwan. The TMS (Transportation Management System) App is one of their core products — the mobile counterpart to the web-based management dashboard used by logistics managers.</p>
+      <p>The Daily Record Table is the most frequently used module in JuboDC, a B2B care management platform serving 30+ daycare institutions across Taiwan. Managers and caregivers rely on it daily to log care details, track attendance, and prepare documentation for government reimbursement reviews.</p>
 
-      <p>Before the app, drivers tracked deliveries on paper: handwritten logs, signed receipts, manually collected at the end of each shift. This created a visibility gap for managers — they had no way to know delivery status until drivers returned to base. Exceptions, failed deliveries, and status updates couldn't be communicated until hours after they happened.</p>
+      <p>As institutions grew and government audits became increasingly stringent, the system that was "good enough" stopped being enough. Staff were spending longer hours on scheduling and manual data entry — time that should have gone to patients. Meanwhile, competitors were already offering visual scheduling tools, and institutions switching to Jubo were arriving with higher expectations.</p>
 
-      <p>The business goal was clear: complete the MVP and ship it within a month to enable initial customer adoption. My job was to translate that urgency into a product that drivers would actually use — not reluctantly tolerate.</p>
+      <p>The Daily Record Table needed more than a patch. It needed a rethink.</p>
 
-      <div class="callout">
-        <div class="callout-label">Business Goal</div>
-        <p>Complete design and MVP development within a month, enabling rapid launch for customer use. The app needed to connect drivers and logistics managers in real time — making delivery status, exceptions, and confirmations visible as they happened.</p>
+      <div class="img-wide">
+        <img src="assets/images/jb-research1.png"
+             alt="FigJam service flow overview"
+             style="width:100%; border-radius:10px;" />
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="section" id="problem">
+      <div class="section-label">Problem</div>
+      <h2>Two pressures, one broken workflow</h2>
+
+      <blockquote class="pull-quote">
+        <p>"Verification week is the most stressful week of the month. We're just manually fixing things the whole time."</p>
+        <cite>— Institution Manager, customer interview</cite>
+      </blockquote>
+
+      <p>Two forces were colliding at once. From users: stricter government audits meant more detailed records and tighter staffing ratios — but the system gave them no way to plan proactively. From the business: competitors already offered visual scheduling features, and potential customers were hesitating to switch.</p>
+
+      <p>At the core of both problems was a single structural gap: the system was designed to record what happened. But staff needed to plan what would happen — and have records flow from that plan.</p>
+
+      <div class="pain-points-grid">
+        <div class="pain-point">
+          <span class="pp-label">Pain Point</span>
+          <p>No monthly view — no way to see or manage an entire month of case schedules at a glance.</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Pain Point</span>
+          <p>Records built from scratch — every daily entry had to be filled manually, even when it matched the pre-arranged plan exactly.</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Pain Point</span>
+          <p>Staffing ratios invisible until too late — managers couldn't check compliance with the government's 1:8 care ratio until verification week.</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Pain Point</span>
+          <p>Exceptions required full rework — a single leave or schedule change meant manual corrections throughout multiple screens.</p>
+        </div>
       </div>
     </section>
 
     <!-- RESEARCH -->
     <section class="section" id="research">
       <div class="section-label">Research</div>
-      <h2>The phone is the last thing a driver wants to deal with</h2>
+      <h2>Understanding the system before redesigning it</h2>
 
-      <p>Before designing any screens, I needed to understand the physical reality of a driver's day. Secondary research on logistics worker behavior, combined with internal interviews with the operations team, surfaced a consistent picture.</p>
-
-      <ul class="bullet-list">
-        <li>
-          <div class="bullet-dot"></div>
-          <div>
-            <span class="bullet-head">One-handed operation is the default</span>
-            Drivers are constantly switching between driving, handling packages, and coordinating with recipients. Their hands are rarely free. Any interaction requiring two hands or sustained attention is a friction point — and a safety risk.
-          </div>
-        </li>
-        <li>
-          <div class="bullet-dot"></div>
-          <div>
-            <span class="bullet-head">Outdoor screens are hard to read in both extremes</span>
-            Under direct sunlight, low-contrast or small-text interfaces become unreadable. At night, a fully bright screen is blinding in the cab of a vehicle. The app had to perform in both conditions without manual adjustment.
-          </div>
-        </li>
-        <li>
-          <div class="bullet-dot"></div>
-          <div>
-            <span class="bullet-head">The adjustment period is the highest-risk phase</span>
-            Introducing any new tool into a driver's workflow creates friction during adoption. If the app required more cognitive load than paper in the first week, drivers would abandon it. The onboarding experience and task flow needed to feel immediately intuitive — not just eventually learnable.
-          </div>
-        </li>
-      </ul>
-
-      <div class="key-point">
-        <span class="kp-label">Design Question</span>
-        <p>How can we enable drivers to record delivery status in unpredictable delivery scenarios — without creating new risks or interruptions to their core job?</p>
-      </div>
-
-      <p>From this, I mapped the key moments in a driver's daily workflow where recording was required: vehicle check-in at the start of shift, route planning before departure, package-by-package delivery confirmation throughout the day, exception handling (failed deliveries, recipient unavailable), and end-of-day return. These moments became the skeleton of the app's information architecture.</p>
-
-      <div class="img-wide">
-        <img src="assets/images/3d-userflow.png"
-             alt="User flow mapping — key recording moments in a driver's daily workflow"
-             style="width:100%; border-radius:10px;" />
-      </div>
-    </section>
-
-    <!-- DESIGN PROCESS -->
-    <section class="section" id="design">
-      <div class="section-label">Design Process</div>
-      <h2>Fast alignment, then structure, then screens</h2>
-
-      <p>Given the one-month timeline, the design process had to be tight. I ran three overlapping phases in parallel rather than sequentially.</p>
+      <p>Before jumping to solutions, I first needed to understand the full shape of the problem. The JuboDC system has nearly 50 interconnected modules — designing one part without understanding the whole would simply move the pain somewhere else.</p>
 
       <ul class="numbered-list">
         <li>
           <span class="num">1</span>
           <div>
-            <span class="item-head">Hand-drawn wireframes for rapid team alignment</span>
-            I started with paper sketches rather than Figma — not to save time, but to keep discussion at the concept level before committing to layout. This meant the team could challenge structural decisions early, before I'd invested hours making them look polished.
+            <span class="item-head">Service flow mapping</span>
+            Together with designers across product lines, I audited the full daily care workflow: every role, task, and time point that touched the record module. This surfaced the logical connections between pre-scheduling and record-keeping that weren't visible from user complaints alone.
           </div>
         </li>
         <li>
           <span class="num">2</span>
           <div>
-            <span class="item-head">Information architecture before interface design</span>
-            I built out the IA in full before designing individual screens. With nearly 50 states and edge cases to account for (vehicle types, multi-stop routes, exception categories), having a shared map of the product prevented inconsistencies in naming, flow, and navigation.
+            <span class="item-head">Qualitative feedback analysis</span>
+            I reviewed accumulated customer service records, categorised the themes, and worked with the PM to prioritise by business impact and user frequency. The majority of screened feedback clustered around two areas: pre-scheduling gaps and operational friction.
           </div>
         </li>
         <li>
           <span class="num">3</span>
           <div>
-            <span class="item-head">Conceptual sketches to communicate element hierarchy</span>
-            Once the IA was agreed upon, I moved to medium-fidelity sketches that showed the spatial layout of each screen — where primary actions sat, how secondary information was deprioritised, and what the tap target hierarchy looked like. Engineers used these to begin frontend scaffolding in parallel with my visual design work.
+            <span class="item-head">Internal interviews</span>
+            Staff from the business and implementation teams were closer to users than anyone. They surfaced the real-world scheduling pressures: government audits demanding more granular data, write-off weeks dreaded by every institution, and schedule changes happening constantly at the last minute.
+          </div>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <div>
+            <span class="item-head">External interviews with key customers</span>
+            Direct conversations with clinic managers revealed workarounds they'd built themselves — spreadsheets, sticky notes, separate tracking systems — all compensating for things JuboDC didn't do.
+          </div>
+        </li>
+        <li>
+          <span class="num">5</span>
+          <div>
+            <span class="item-head">Prototype testing (3 rounds)</span>
+            Once we had an initial concept, we tested with the internal customer service team and key customers. This is where our assumptions were challenged most directly.
           </div>
         </li>
       </ul>
 
-      <div class="img-wide">
-        <img src="assets/images/3d-ia.png"
-             alt="Information architecture — full app structure"
-             style="width:100%; border-radius:10px;" />
+      <div class="callout">
+        <div class="callout-label">Testing Pivot</div>
+        <p>Prototype testing revealed that the top two feature requests were a monthly case schedule view and a manpower ratio checker — both of which the system had no equivalent for. Our initial prioritisation was wrong. The testing changed the release scope.</p>
+      </div>
+
+    </section>
+
+    <!-- INSIGHT -->
+    <section class="section" id="insight">
+      <div class="section-label">Insight</div>
+
+      <div class="key-point">
+        <span class="kp-label">The Core Shift</span>
+        <p>Old model: record after the fact, one entry at a time, starting from zero.</p>
+        <p>New model: plan the month → records default to the plan → staff confirm or adjust by exception.</p>
+        <p>This one shift — from reactive to proactive — became the design principle behind every feature that followed.</p>
       </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="section" id="features">
+    <!-- SOLUTION -->
+    <section class="section" id="solution">
       <div class="section-label">Design Solution</div>
-      <h2>Three features, one coherent daily workflow</h2>
-      <p>Every screen maps to a specific moment in the driver's day. The goal wasn't to add capability — it was to replace the mental overhead of paper record-keeping with something that required less attention, not more.</p>
+      <h2>Three systems that put the care team back in control</h2>
+      <p>Each solution maps directly to a breakdown found in research — the goal wasn't to add features, but to eliminate the moments where staff had to hold complexity in their heads or re-enter information they already had.</p>
 
       <!-- 01 -->
       <div class="solution-item">
         <div class="solution-number">01</div>
-        <div class="solution-title">Log in and select vehicle for pickup</div>
-        <p class="solution-desc">Before any delivery begins, drivers log vehicle information for the day — which vehicle, current mileage. Once submitted, the system marks the vehicle as "in use" and unlocks the rest of the app. This prevents data attribution errors when multiple drivers share vehicles, and gives managers a clean usage record without a separate tracking system.</p>
+        <div class="solution-title">Overall Scheduling &amp; Monthly Case Report</div>
+        <p class="solution-desc">A master-table schedule built around how institutions actually work: daily services, transportation, community services, and custom projects are presented together, quantitatively. Abnormal items surface directly on the main view so managers can spot and resolve exceptions without scanning individual records.<br><br>One-click scheduling eliminates the monthly rebuild. Staff can copy last month's schedule — or apply a saved template — and paste it into the new month in seconds. Recurring arrangements are assumed; exceptions are the only thing that needs attention.</p>
         <div class="gif-demo">
-          <img src="assets/images/3d-design1.gif" alt="Vehicle login and pickup selection">
+          <img src="assets/images/jb-design1.gif" alt="Overall scheduling and monthly case report demo">
         </div>
       </div>
 
       <!-- 02 -->
       <div class="solution-item">
         <div class="solution-number">02</div>
-        <div class="solution-title">Switch between map and list to navigate delivery routes</div>
-        <p class="solution-desc">Drivers control their own delivery sequence — as long as everything gets done within the window. The route view offers map and list modes: the map shows optimized route suggestions and color-coded sequence markers; the list shows task details, estimated times, and a direct call button for recipient contact. Drivers switch based on context — map when orienting, list when executing.</p>
+        <div class="solution-title">Record Table</div>
+        <p class="solution-desc">Check-ins, check-outs, vehicle arrivals and returns now default to the pre-arranged plan. Staff confirm — or adjust — rather than entering data from zero. Batch check-in and check-out based on the day's schedule replaces individual manual entry, reducing the time clients spend logged outside of care. If something doesn't match, a single click opens the record for correction.</p>
         <div class="gif-demo">
-          <img src="assets/images/3d-design2.gif" alt="Map and list route navigation">
+          <img src="assets/images/jb-design2.gif" alt="Record table with pre-schedule integration demo">
         </div>
       </div>
 
       <!-- 03 -->
       <div class="solution-item">
         <div class="solution-number">03</div>
-        <div class="solution-title">Complete delivery tasks and record package status</div>
-        <p class="solution-desc">This replaces the paper signature and handwritten record entirely. For each package, drivers confirm delivery, photograph proof-of-receipt, and flag exceptions — all from a single screen designed to be completed without sustained attention. Managers see status updates in real time, eliminating the end-of-day information blackout that paper records created.</p>
+        <div class="solution-title">Headcount Statistics</div>
+        <p class="solution-desc">Government regulations require institutions to maintain a minimum 1:8 staff-to-case ratio. When case numbers shift — a sudden addition, a last-minute leave — compliance risk appears silently. The headcount view calculates ratios in real time during scheduling, so managers can catch and resolve problems before the day of care, not during the most stressful week of the month.</p>
         <div class="gif-demo">
-          <img src="assets/images/3d-design3.gif" alt="Delivery confirmation and package status recording">
+          <img src="assets/images/jb-design3.gif" alt="Daily headcount statistics demo">
         </div>
       </div>
 
@@ -974,46 +1126,53 @@
     <!-- REFLECTION -->
     <section class="section" id="reflection">
       <div class="section-label">Reflection</div>
-      <h2>What a two-month internship taught me about shipping under pressure</h2>
+      <h2>What I carry forward from this project</h2>
 
       <ul class="numbered-list">
         <li>
           <span class="num">1</span>
           <div>
-            <span class="item-head">Validate assumptions even without clients in the room.</span>
-            We had no direct access to drivers during the design phase. But that didn't mean we had to guess — internal interviews with operations managers, secondary research on logistics worker behavior, and ongoing alignment with the PM gave us enough to make grounded decisions. The lesson wasn't "always get user access." It was: find every available proxy and use them rigorously.
+            <span class="item-head">Rethinking the workflow matters more than redesigning the screen.</span>
+            The most impactful decision in this project wasn't a UI choice — it was changing the mental model from "record after" to "plan first, confirm by exception." That only became visible after mapping the full service flow, not just the interface.
           </div>
         </li>
         <li>
           <span class="num">2</span>
           <div>
-            <span class="item-head">Simplicity is the result of iteration, not the starting point.</span>
-            Early versions of the delivery task flow had too many steps and too many options. Each round of internal review pushed us to remove something. The final version is simpler not because we designed it that way first, but because we kept asking what could be cut without losing meaning. Good product design is a reduction process.
+            <span class="item-head">Early, systematic research prevents late, expensive rework.</span>
+            Mapping the service flow before any interviews meant I asked sharper questions and caught logical gaps before they became design decisions. It also helped engineers and PMs align quickly — because we all shared the same picture of the system.
           </div>
         </li>
         <li>
           <span class="num">3</span>
           <div>
-            <span class="item-head">Speed and quality aren't opposites — they require different tools.</span>
-            Shipping an MVP in a month sounds like it should mean cutting corners. In practice, it meant being more disciplined: clear IA before any screens, paper wireframes before Figma, and parallel workstreams so engineers weren't waiting on designers. The constraint forced a tighter process, not a worse one.
+            <span class="item-head">Prototype testing will challenge your assumptions. Let it.</span>
+            We entered testing with a confident prioritisation. The results moved manpower ratio tracking much higher than we expected. Being willing to reorder our scope based on that changed what we shipped first — and made the release more immediately useful.
+          </div>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <div>
+            <span class="item-head">Internal stakeholders are an underused research resource.</span>
+            The business and customer service teams had specific, detailed knowledge about user pain that no interview guide would have uncovered. Building those relationships early gave me a continuous feedback loop throughout the project, not just at formal research stages.
           </div>
         </li>
       </ul>
 
-      <!-- NEXT PROJECT — loop back to project 1 -->
+      <!-- NEXT PROJECT -->
       <div class="next-project">
         <div class="next-project-label">Next Project</div>
-        <a href="case-study.html" class="next-project-card">
+        <a href="tms-app.html" class="next-project-card">
           <div class="next-project-thumb">
-            <img src="assets/images/vl-hero.JPG" alt="VoiceLamp">
+            <img src="assets/images/3d-hero.png" alt="TMS App">
           </div>
           <div class="next-project-info">
             <div class="next-project-body">
-              <div class="next-project-title">VoiceLamp</div>
-              <div class="next-project-desc">Giving elderly Mandarin-speaking users back control of their medication through a voice-guided Raspberry Pi label reader.</div>
+              <div class="next-project-title">TMS App</div>
+              <div class="next-project-desc">Empowering small-logistics drivers to record delivery progress on the go — without stopping, without paper, without losing track.</div>
               <div class="next-project-meta">
-                <span class="tag">Accessibility</span>
-                <span class="tag">Hardware</span>
+                <span class="tag">Product Design</span>
+                <span class="tag">Mobile</span>
                 <span class="next-project-year">2024</span>
               </div>
             </div>
@@ -1026,6 +1185,7 @@
   </main>
 </div>
 
+<!-- FOOTER -->
 <!-- FOOTER -->
   <footer>
     <span class="footer-name">Sophie Lee © 2026</span>
@@ -1041,23 +1201,29 @@
 </div><!-- /page-wrap -->
 
 <script>
+  // Scroll progress bar
   const bar = document.getElementById('scrollProgress');
   window.addEventListener('scroll', () => {
     const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
     bar.style.width = pct + '%';
   });
 
+  // Sticky nav shadow
   const nav = document.getElementById('mainNav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 10);
   });
 
+  // Sidebar dot nav — IntersectionObserver
+  const sections = document.querySelectorAll('section[id], div[id="overview"]');
   const navItems = document.querySelectorAll('.nav-item[data-section]');
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        const id = entry.target.id;
         navItems.forEach(item => {
-          item.classList.toggle('active', item.dataset.section === entry.target.id);
+          item.classList.toggle('active', item.dataset.section === id);
         });
       }
     });
