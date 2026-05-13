@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sophie Lee — Interaction Designer</title>
+  <!-- Preload key PP Mori weights to prevent flash of bold on refresh -->
+  <link rel="preload" href="assets/fonts/PPMori-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/PPMori-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* ── PP MORI FONTS ── */
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Extralight.woff2') format('woff2');
+      font-weight: 200; font-style: normal; font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2');
+      font-weight: 200; font-style: italic; font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Regular.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2');
+      font-weight: 400; font-style: italic; font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBold.woff2') format('woff2');
+      font-weight: 600; font-style: normal; font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2');
+      font-weight: 600; font-style: italic; font-display: block;
+    }
+
+    /* ── TOKENS ── */
+    :root {
+      --black:   #111111;
+      --dark:    #333333;
+      --mid:     #666666;
+      --muted:   #999999;
+      --subtle:  #CCCCCC;
+      --border:  #E5E5E5;
+      --surface: #F5F5F5;
+      --white:   #FFFFFF;
+      --font: 'PP Mori', system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--black);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--black); }
+    .nav-resume {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+      letter-spacing: 0.06em;
+      transition: border-color 0.15s, color 0.15s;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .nav-resume:hover { border-color: #ccc; color: var(--black); }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px 120px;
+    }
+
+    /* ── BIO ── */
+    .bio {
+      padding: 80px 0 72px;
+      max-width: 680px;
+    }
+    .bio-greeting {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+    }
+    .bio-greeting .line1 {
+      display: block;
+      line-height: 1.05;
+    }
+    .bio-greeting .line2 {
+      display: block;
+      font-size: clamp(22px, 2.8vw, 36px);
+      font-weight: 200;
+      line-height: 1.1;
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 200;
+    }
+    .bio-text {
+      font-size: clamp(15px, 2vw, 17px);
+      line-height: 1.75;
+      color: var(--dark);
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+    .bio-text em { font-style: normal; color: var(--black); font-weight: 600; }
+    .bio-tag { font-weight: 600; color: var(--black); }
+    .bio-photo {
+      /* 0.6× of original sizing, natural aspect ratio, no crop */
+      width: clamp(111px, 13.8vw, 180px);
+      height: auto;
+      border-radius: 0;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .sva-logo { height: 2em; width: auto; vertical-align: middle; margin-left: 4px; position: relative; top: -1px; }
+    .bio-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 22px;
+      background: var(--black);
+      color: var(--white);
+      font-size: 13px;
+      font-family: var(--font);
+      border: 1px solid var(--black);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.75; }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 22px;
+      background: transparent;
+      color: var(--black);
+      font-size: 13px;
+      font-family: var(--font);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--subtle); }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── TBD CARD ── */
+    .project-card--tbd { cursor: default; opacity: 0.5; }
+    .project-card--tbd:hover .card-title { text-decoration: none; }
+    .card-image--tbd {
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--surface),
+        var(--surface) 6px,
+        var(--bg) 6px,
+        var(--bg) 12px
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tbd-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CATEGORY HEADER ── */
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 52px;
+      margin-bottom: 28px;
+    }
+    .category-header:first-of-type { margin-top: 0; }
+    .category-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .category-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── PROJECT GRID ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px 32px;
+    }
+
+    .project-card {
+      cursor: pointer;
+      display: block;
+    }
+    .project-card:hover .card-image { opacity: 0.9; }
+    .project-card:hover .card-title { text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
+
+    .card-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: var(--surface);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .card-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px 18px;
+    }
+    .card-img-caption {
+      font-size: 11px;
+      color: var(--subtle);
+      font-style: italic;
+    }
+
+    /*
+      ── TYPE SCALE (fluid via clamp) ─────────────────────────────────────
+      Role              Min     Fluid       Max     Weight  Notes
+      bio-greeting      32px    4vw         52px    600/200 h1, two-line
+      bio-text          15px    2vw         17px    400     body copy
+      nav-name          13px    —           —       600     fixed (tiny)
+      category-label    10px    —           —       400     fixed (label)
+      card-title        16px    1.8vw       19px    600     project name
+      card-desc         13px    1.3vw       14px    400     supporting copy
+      tag               12px    —           —       400     fixed (chip)
+      card-client       10px    —           —       400     fixed (overlay)
+      btn               13px    —           —       400     fixed (action)
+      footer            11px    —           —       400     fixed (ui)
+      ─────────────────────────────────────────────────────────────────────
+    */
+    .card-client {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 1;
+      /* no badge background — logo floats directly on image */
+    }
+    /* circular logo, scales with viewport */
+    .card-client img {
+      display: block;
+      width: clamp(36px, 4vw, 54px);
+      height: clamp(36px, 4vw, 54px);
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: clamp(16px, 1.8vw, 19px);
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.25;
+    }
+    .card-title-icon {
+      color: var(--muted);
+      font-size: 14px;
+      margin-left: 4px;
+    }
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .tag {
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      padding: 4px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--mid);
+      white-space: nowrap;
+      background: transparent;
+    }
+    .card-desc {
+      font-size: clamp(13px, 1.3vw, 14px);
+      font-weight: 400;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+footer {
+      border-top: 1px solid var(--border);
+      margin-top: 96px;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-name {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .footer-contact {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-email {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-email:hover { color: var(--black); }
+    .copy-hint {
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .footer-email:hover .copy-hint { opacity: 1; }
+    .copy-confirm {
+      position: absolute;
+      right: 0;
+      top: -26px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--black);
+      background: #efefef;
+      padding: 3px 8px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .footer-email.copied .copy-confirm { opacity: 1; }
+    .footer-linkedin {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-linkedin:hover { color: var(--black); }
+    @media (max-width: 600px) {
+      .footer-contact { gap: 16px; }
+    }
+
+    /* Tags stack below title before they can overflow the card frame */
+    @media (max-width: 960px) {
+      .card-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .card-tags { justify-content: flex-start; }
+    }
+
+    @media (max-width: 700px) {
+      .nav-inner { padding: 0 24px; }
+      .page { padding: 0 24px 80px; }
+
+      .bio { padding: 48px 0 48px; }
+      .projects-grid { grid-template-columns: 1fr; gap: 36px; }
+      .category-header { margin-top: 40px; }
+    }
+
+    /* Hide real content until skeleton dismissed */
+    .page { opacity: 0; }
+    .page.page-reveal { opacity: 1; transition: opacity 0.45s ease; }
+
+    /* ── SKELETON SCREEN ── */
+    @keyframes sk-pulse {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    #sk-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      background: var(--white);
+      overflow-y: auto;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    #sk-screen.sk-hidden { opacity: 0; }
+    .sk-box {
+      border-radius: 6px;
+      background: linear-gradient(90deg, #ebebeb 25%, #f5f5f5 50%, #ebebeb 75%);
+      background-size: 400% 100%;
+      animation: sk-pulse 1.5s ease infinite;
+    }
+    /* Nav skeleton */
+    .sk-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sk-nav-links { display: flex; gap: 28px; align-items: center; }
+    .sk-pill { border-radius: 999px !important; }
+    /* Page wrapper */
+    .sk-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+    /* Bio skeleton */
+    .sk-bio { padding: 80px 0 64px; }
+    .sk-bio-h1 { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .sk-bio-body { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .sk-bio-btns { display: flex; gap: 12px; }
+    /* Category label */
+    .sk-cat {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 60px;
+      margin-bottom: 28px;
+    }
+    .sk-cat-rule { flex: 1; height: 1px; background: var(--border); }
+    /* Project grid */
+    .sk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px 32px;
+    }
+    .sk-card-img {
+      width: 100%;
+      aspect-ratio: 3/2;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .sk-card-meta { display: flex; flex-direction: column; gap: 10px; }
+    .sk-tags { display: flex; gap: 8px; }
+    @media (max-width: 700px) {
+      .sk-nav { padding: 20px 24px; }
+      .sk-page { padding: 0 24px 80px; }
+      .sk-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── SKELETON SCREEN ── -->
+<div id="sk-screen" aria-hidden="true">
+  <!-- Nav -->
+  <div class="sk-nav">
+    <div class="sk-box" style="width:100px;height:14px;"></div>
+    <div class="sk-nav-links">
+      <div class="sk-box" style="width:36px;height:12px;"></div>
+      <div class="sk-box" style="width:44px;height:12px;"></div>
+      <div class="sk-box sk-pill" style="width:88px;height:32px;"></div>
+    </div>
+  </div>
+  <!-- Page -->
+  <div class="sk-page">
+    <!-- Bio -->
+    <div class="sk-bio">
+      <div class="sk-bio-h1">
+        <div class="sk-box" style="width:55%;height:44px;"></div>
+        <div class="sk-box" style="width:42%;height:44px;"></div>
+      </div>
+      <div class="sk-bio-body">
+        <div class="sk-box" style="width:100%;height:13px;"></div>
+        <div class="sk-box" style="width:94%;height:13px;"></div>
+        <div class="sk-box" style="width:88%;height:13px;"></div>
+        <div class="sk-box" style="width:72%;height:13px;"></div>
+        <!-- paragraph break (mirrors <br><br>) -->
+        <div class="sk-box" style="width:100%;height:13px;margin-top:22px;"></div>
+        <div class="sk-box" style="width:96%;height:13px;"></div>
+        <div class="sk-box" style="width:78%;height:13px;"></div>
+      </div>
+      <div class="sk-bio-btns">
+        <div class="sk-box sk-pill" style="width:96px;height:38px;"></div>
+        <div class="sk-box sk-pill" style="width:120px;height:38px;"></div>
+      </div>
+    </div>
+    <!-- UX Design category -->
+    <div class="sk-cat">
+      <div class="sk-box" style="width:130px;height:11px;"></div>
+      <div class="sk-cat-rule"></div>
+    </div>
+    <div class="sk-grid">
+      <!-- card 1 -->
+      <div>
+        <div class="sk-box sk-card-img"></div>
+        <div class="sk-card-meta">
+          <div class="sk-box" style="width:48%;height:17px;"></div>
+          <div class="sk-tags">
+            <div class="sk-box sk-pill" style="width:90px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:70px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:50px;height:24px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+          <div class="sk-box" style="width:100%;height:12px;"></div>
+          <div class="sk-box" style="width:82%;height:12px;"></div>
+        </div>
+      </div>
+      <!-- card 2 -->
+      <div>
+        <div class="sk-box sk-card-img"></div>
+        <div class="sk-card-meta">
+          <div class="sk-box" style="width:52%;height:17px;"></div>
+          <div class="sk-tags">
+            <div class="sk-box sk-pill" style="width:80px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:80px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:50px;height:24px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+          <div class="sk-box" style="width:100%;height:12px;"></div>
+          <div class="sk-box" style="width:76%;height:12px;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Work Project category -->
+    <div class="sk-cat">
+      <div class="sk-box" style="width:100px;height:11px;"></div>
+      <div class="sk-cat-rule"></div>
+    </div>
+    <div class="sk-grid">
+      <!-- card 4 -->
+      <div>
+        <div class="sk-box sk-card-img"></div>
+        <div class="sk-card-meta">
+          <div class="sk-box" style="width:40%;height:17px;"></div>
+          <div class="sk-tags">
+            <div class="sk-box sk-pill" style="width:88px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:100px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:50px;height:24px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+          <div class="sk-box" style="width:100%;height:12px;"></div>
+          <div class="sk-box" style="width:70%;height:12px;"></div>
+        </div>
+      </div>
+      <!-- card 5 -->
+      <div>
+        <div class="sk-box sk-card-img"></div>
+        <div class="sk-card-meta">
+          <div class="sk-box" style="width:36%;height:17px;"></div>
+          <div class="sk-tags">
+            <div class="sk-box sk-pill" style="width:100px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:60px;height:24px;"></div>
+            <div class="sk-box sk-pill" style="width:50px;height:24px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+          <div class="sk-box" style="width:100%;height:12px;"></div>
+          <div class="sk-box" style="width:64%;height:12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Work</a>
+      <a href="about.html">About</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- BIO -->
+  <div class="bio">
+    <img class="bio-photo" src="assets/images/myphoto.png" alt="Sophie Lee">
+    <h1 class="bio-greeting"><span class="line1">Hi, I'm Sophie.</span><span class="line2">A Product Designer based in nyc.</span></h1>
+    <p class="bio-text">
+      I started my career at Jubo, designing <span class="bio-tag">digital products</span> for the <span class="bio-tag">B2B healthcare industry</span>. That experience shaped how I think about design: removing friction between a person and what they're trying to do. It also introduced me to the real consequences of inaccessible design and why inclusive solutions matter in high-stakes contexts.<br><br>
+      I'm a current <span class="bio-tag">Interaction Design</span> student at <span class="bio-tag">SVA<img class="sva-logo" src="assets/images/sva-logo.png" alt="SVA logo"></span>, expanding my practice into <span class="bio-tag">product design</span>, <span class="bio-tag">service design</span>, and <span class="bio-tag">assistive technology</span> — with a focus on translating complex problems into accessible solutions for the people who need them most.
+    </p>
+    <div class="bio-actions">
+      
+    </div>
+  </div>
+
+  <!-- ── UX Design Project ── -->
+  <div class="category-header">
+    <span class="category-label">UX Design Project</span>
+    <div class="category-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <a href="case-study.html" class="project-card">
+      <div class="card-image">
+        <div class="card-client"><img src="assets/images/vl-logo.png" alt="Voice Lamp"></div>
+        <img src="assets/images/vl-hero.JPG" alt="VoiceLamp — Art Deco lamp with integrated camera and speaker">
+      </div>
+      <div class="card-meta">
+        <span class="card-title">Voice Lamp</span>
+        <div class="card-tags">
+          <span class="tag">Physical Computing</span>
+          <span class="tag">Accessibility</span>
+          <span class="tag">2025</span>
+        </div>
+      </div>
+      <div class="card-desc">Designing a reading lamp to solve the loss of reading independence, so that elderly people with visual impairment can enjoy reading without needing help.</div>
+    </a>
+
+    <a href="case-study-2.html" class="project-card">
+      <div class="card-image">
+        <div class="card-client"><img src="assets/images/ih-logo.jpg" alt="iHOPE"></div>
+        <img src="assets/images/ih-hero.png" alt="AT Hacker Group — service model overview">
+      </div>
+      <div class="card-meta">
+        <span class="card-title">AT Hacker Group</span>
+        <div class="card-tags">
+          <span class="tag">Service Design</span>
+          <span class="tag">Accessibility</span>
+          <span class="tag">2025</span>
+        </div>
+      </div>
+      <div class="card-desc">Redesigning the broken AT repair pipeline through a structured, volunteer-powered service so the AT team can focus on students.</div>
+    </a>
+
+  </div>
+
+  <!-- ── Work Project ── -->
+  <div class="category-header">
+    <span class="category-label">Work Project</span>
+    <div class="category-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <a href="case-study-3.html" class="project-card">
+      <div class="card-image">
+        <div class="card-client"><img src="assets/images/jb-logo.jpeg" alt="Jubo Health"></div>
+        <img src="assets/images/jb-hero.jpg" alt="Jubo DC — scheduling module redesign">
+      </div>
+      <div class="card-meta">
+        <span class="card-title">Jubo DC</span>
+        <div class="card-tags">
+          <span class="tag">UX Research</span>
+          <span class="tag">Product Design</span>
+          <span class="tag">2024</span>
+        </div>
+      </div>
+      <div class="card-desc">Helping daycare institution staff schedule and record patient care without the paperwork burden.</div>
+    </a>
+
+    <a href="case-study-6.html" class="project-card">
+      <div class="card-image">
+        <div class="card-client"><img src="assets/images/3d-logo.png" alt="3drens Inc."></div>
+        <img src="assets/images/3d-hero.png" alt="TMS App — delivery management interface">
+      </div>
+      <div class="card-meta">
+        <span class="card-title">TMS App</span>
+        <div class="card-tags">
+          <span class="tag">Mobile Design</span>
+          <span class="tag">0-to-1</span>
+          <span class="tag">2023</span>
+        </div>
+      </div>
+      <div class="card-desc">Designing a logistics driver app for one-handed use, outdoor conditions, and a one-month ship date.</div>
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Sophie Lee © 2026</span>
+    <div class="footer-contact">
+      <button class="footer-email" onclick="copyEmail(this)" aria-label="Copy email address">
+        ylee32@sva.edu
+        <span class="copy-hint">click to copy</span>
+        <span class="copy-confirm">copied!</span>
+      </button>
+      <a href="https://www.linkedin.com/in/yi-hsuan-lee-ab3321158/" target="_blank" class="footer-linkedin">LinkedIn ↗</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // Dismiss skeleton screen once page (including images) has loaded
+  (function () {
+    var sk = document.getElementById('sk-screen');
+    var page = document.querySelector('.page');
+    var dismissed = false;
+    function dismiss() {
+      if (dismissed) return;
+      dismissed = true;
+      sk.classList.add('sk-hidden');
+      if (page) page.classList.add('page-reveal');
+      setTimeout(function () { if (sk.parentNode) sk.remove(); }, 500);
+    }
+    if (document.readyState === 'complete') {
+      setTimeout(dismiss, 400);
+    } else {
+      window.addEventListener('load', function () { setTimeout(dismiss, 200); });
+    }
+    setTimeout(dismiss, 5000);
+  })();
+</script>
+<script src="assets/js/skeleton.js" defer></script>
+</body>
+</html>

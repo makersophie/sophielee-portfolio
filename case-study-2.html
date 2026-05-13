@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AT Hacker Group — Case Study — Sophie Lee</title>
+  <style>
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Extralight.woff2') format('woff2');
+      font-weight: 200;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2');
+      font-weight: 200;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2');
+      font-weight: 600;
+      font-style: italic;
+      font-display: block;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text: #1a1a1a;
+      --muted: #999;
+      --border: #e8e8e8;
+      --bg: #ffffff;
+      --white: #ffffff;
+      --dark: #2a2a2a;
+      --mid: #666666;
+      --subtle: #cccccc;
+      --surface: #f5f5f5;
+      --sidebar-w: 210px;
+      --dot-active: #1a1a1a;
+      --dot-inactive: #d4d4d4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'PP Mori', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(ellipse 800px 700px at calc(100% + 80px) -120px, rgba(255, 155, 70, 0.40), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -100px 18%,              rgba(255, 215, 90, 0.30), transparent 68%),
+        radial-gradient(ellipse 600px 520px at 88%          42%,        rgba(255, 120, 80, 0.24), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -60px         68%,       rgba(255, 190, 100, 0.28), transparent 68%),
+        radial-gradient(ellipse 560px 480px at calc(100% - 80px) 84%,  rgba(255, 100, 90, 0.20), transparent 68%),
+        var(--bg);
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      transition: box-shadow 0.2s;
+    }
+    nav.scrolled { box-shadow: 0 1px 0 var(--border); }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+    .nav-resume {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px !important;
+      letter-spacing: 0.06em !important;
+      transition: border-color 0.15s, color 0.15s !important;
+    }
+    .nav-resume:hover { border-color: #ccc !important; color: var(--text) !important; }
+
+    /* ── SCROLL PROGRESS ── */
+    .scroll-progress {
+      position: fixed;
+      top: 52px; left: 0;
+      height: 2px;
+      background: var(--text);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.08s linear;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 52px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 52px;
+      align-self: flex-start;
+      flex-shrink: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - 52px);
+      padding: 36px 24px 36px 32px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .sidebar-meta {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+    }
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--dot-inactive);
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-item.active .nav-dot {
+      background: var(--dot-active);
+      transform: scale(1.25);
+    }
+    .nav-item a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active a,
+    .nav-item a:hover { color: var(--text); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 52px clamp(24px, 5vw, 72px) 120px clamp(24px, 4vw, 56px);
+    }
+
+    /* ── PROJECT HEADER ── */
+    .project-header {
+      margin-bottom: 0;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-header-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .project-header-name {
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .project-header-name a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .project-header-name a:hover { color: var(--text); }
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: #555;
+      white-space: nowrap;
+      background: #fafafa;
+    }
+    .project-year {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+    .project-subtitle {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── HERO IMAGE ── */
+    .hero-image { margin: 28px 0 0; }
+    .hero-image .img-placeholder {
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      background: #f0f0f0;
+      max-width: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 20px;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      padding-top: 72px;
+      padding-bottom: 8px;
+    }
+    .section:first-child { padding-top: 64px; }
+    .section-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-family: 'PP Mori', system-ui, sans-serif;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-size: clamp(16px, 1.6vw, 22px);
+      font-family: 'PP Mori', system-ui, sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #3d3d3d;
+      margin-bottom: 20px;
+      font-size: clamp(13px, 1vw, 15px);
+      max-width: 100%;
+    }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── META GRID ── */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 24px 0 28px;
+    }
+    .meta-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .meta-value {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      background: #fafafa;
+    }
+    .callout-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .callout p {
+      margin: 0;
+      color: #2a2a2a;
+      font-size: clamp(15px, 1.1vw, 17px);
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 2px solid var(--text);
+      margin: 32px 0;
+      padding: 4px 0 4px 24px;
+      max-width: min(600px, 100%);
+    }
+    .pull-quote p {
+      font-size: clamp(17px, 1.6vw, 22px);
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0 0 8px;
+      max-width: none;
+    }
+    .pull-quote cite {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    /* ── KEY POINT ── */
+    /* ⚠ Use MAXIMUM ONCE per section — only for a single critical emphasis. */
+    .key-point {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      max-width: 100%;
+    }
+    .kp-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .key-point p {
+      font-size: clamp(14px, 1.1vw, 15px);
+      color: var(--text) !important;
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── USER STORY ── */
+    .user-story {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .us-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .us-body {}
+    .us-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .us-need {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+    .us-need strong { color: var(--text); font-weight: 500; }
+
+    /* ── PAIN POINTS ── */
+    .pain-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .pain-point {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      position: relative;
+      background: #ffffff;
+    }
+    .pain-point::before {
+      content: '!';
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      text-align: center;
+    }
+    .pp-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pain-point p {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      padding-right: 24px;
+      max-width: none;
+    }
+
+    /* ── INSIGHT ── */
+    .insight {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      margin: 0;
+    }
+    .insight:first-of-type { border-top: 1px solid var(--border); }
+    .insight-num {
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 300;
+      color: var(--subtle);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 52px;
+      letter-spacing: -0.03em;
+    }
+    .insight-body {}
+    .insight-title {
+      font-size: clamp(14px, 1.1vw, 15px);
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .insight-desc {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--mid);
+      line-height: 1.6;
+      max-width: none;
+      margin: 0;
+    }
+
+    /* ── NUMBERED LIST ── */
+    .numbered-list {
+      list-style: none;
+      margin: 22px 0;
+      max-width: 100%;
+    }
+    .numbered-list li {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(15px, 1.1vw, 17px);
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .numbered-list li:first-child { border-top: 1px solid var(--border); }
+    .num {
+      flex-shrink: 0;
+      width: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      padding-top: 1px;
+    }
+    .item-head {
+      display: block;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    /* ── BULLET LIST ── */
+    .bullet-list {
+      list-style: none;
+      margin: 16px 0;
+      max-width: 100%;
+    }
+    .bullet-list li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(15px, 1.1vw, 17px);
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .bullet-list li:first-child { border-top: 1px solid var(--border); }
+    .bullet-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-top: 9px;
+      flex-shrink: 0;
+    }
+    .bullet-head {
+      display: block;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    /* ── IMAGE PLACEHOLDERS ── */
+    .img-placeholder {
+      background: #f2f2f2;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px 18px;
+    }
+    .img-caption {
+      font-size: 11px;
+      color: #aaa;
+      font-style: italic;
+    }
+    .img-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 28px 0;
+      max-width: 100%;
+    }
+    .img-wide {
+      margin: 28px 0;
+      max-width: 100%;
+    }
+
+    /* ── DIVIDER / CONNECT ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0 0;
+    }
+    .connect {
+      padding: 36px 0 0;
+      max-width: 100%;
+    }
+    .connect-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .connect a {
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .connect a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    /* ── NEXT PROJECT CARD ── */
+    .next-project {
+      margin-top: 52px;
+    }
+    .next-project-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .next-project-card {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 100%;
+    }
+    .next-project-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .next-project-thumb {
+      width: 100%;
+      aspect-ratio: 16/5;
+      background: #f2f2f2;
+      overflow: hidden;
+    }
+    .next-project-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .next-project-info {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .next-project-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .next-project-title {
+      font-size: clamp(15px, 1.3vw, 18px);
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .next-project-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .next-project-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .next-project-year {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 2px;
+    }
+    .next-project-arrow {
+      font-size: 18px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .next-project-card:hover .next-project-arrow {
+      color: var(--text);
+      transform: translateX(4px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px clamp(24px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-name {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .footer-contact {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-email {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-email:hover { color: var(--black); }
+    .copy-hint {
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .footer-email:hover .copy-hint { opacity: 1; }
+    .copy-confirm {
+      position: absolute;
+      right: 0;
+      top: -26px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--black);
+      background: #efefef;
+      padding: 3px 8px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .footer-email.copied .copy-confirm { opacity: 1; }
+    .footer-linkedin {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-linkedin:hover { color: var(--black); }
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .footer-contact { gap: 16px; }
+    }
+
+    /* ── TABLET ── */
+    @media (max-width: 1024px) {
+      :root { --sidebar-w: 180px; }
+      .main { padding: 44px 40px 100px 40px; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main {
+        padding: 28px 24px 80px;
+      }
+      .project-header-top {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .project-header-right { justify-content: flex-start; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .img-grid-2 { grid-template-columns: 1fr; }
+      footer { margin-left: 0; padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 24px; }
+      h2 { font-size: 16px; }
+      p  { font-size: 14px; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── QUOTE WITH AVATAR ── */
+    .quote-with-avatar {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin: 32px 0;
+    }
+    .quote-avatar {
+      flex-shrink: 0;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin-top: 4px;
+    }
+    .quote-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .quote-with-avatar .pull-quote {
+      margin: 0;
+      flex: 1;
+    }
+
+    /* ── STAGE TABS ── */
+    .stage-tabs { margin: 28px 0; }
+    .stage-tab-nav {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .stage-tab-btn {
+      flex: 1;
+      text-align: center;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-family: 'PP Mori', system-ui, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 0;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .stage-tab-btn:hover { color: var(--text); }
+    .stage-tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--text);
+    }
+    .stage-tab-panel { display: none; padding-top: 16px; }
+    .stage-tab-panel.active { display: block; }
+    .stage-tab-panel img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    .stage-tab-caption {
+      margin-top: 14px;
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--mid);
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIBILITY CHIPS ── */
+    .resp-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 0;
+    }
+    .resp-chip {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--dark);
+    }
+    .resp-chip--fix {
+      background: #fff3cd;
+      border-color: #f0b429;
+      color: #7a4f00;
+    }
+
+    /* ── ENVIRONMENT PHOTO GRID ── */
+    .broke-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .broke-grid img {
+      width: 100%;
+      border-radius: 8px;
+      display: block;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+    }
+
+    /* ── SERVICE OVERVIEW DIAGRAM ── */
+    .service-diagram { margin: 32px 0; overflow-x: auto; }
+    .diagram-title {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); font-weight: 600; margin-bottom: 14px; max-width: none;
+    }
+    .svc-table {
+      display: grid;
+      grid-template-columns: 88px repeat(4, 1fr);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      min-width: 520px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--dark);
+    }
+    .sc {
+      padding: 12px 13px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+    }
+    .sc-label {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 600; color: #B8802A; background: #fdf8f0;
+      display: flex; align-items: center; padding: 10px 12px;
+      border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .sc-stage {
+      background: #C4882F; color: #fff; font-weight: 600; font-size: 12px;
+      text-align: center; padding: 13px 10px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 3px;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid var(--border);
+    }
+    .sc-stage-sub { font-size: 9px; font-weight: 400; opacity: 0.8; }
+    .sc-dashed { border-top: 1px dashed var(--border) !important; }
+    .sc-section {
+      grid-column: 1 / -1; padding: 7px 13px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #B8802A; background: #fdf8f0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .sc-green { color: #2d7a4a; font-weight: 600; }
+    .sc-eor { border-right: none !important; }
+    .sc-eob { border-bottom: none !important; }
+    .sc-center { display: flex; align-items: center; justify-content: center; text-align: center; }
+
+    /* lightbox — handled by assets/js/lightbox.js */
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Work</a>
+      <a href="about.html">About</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M8 2L4 6L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Projects
+    </a>
+    <div class="sidebar-meta">
+      <div class="sidebar-label">Case Study</div>
+      <div class="sidebar-title">AT Hacker Group</div>
+    </div>
+
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-section="overview">
+        <div class="nav-dot"></div>
+        <a href="#overview">Overview</a>
+      </li>
+      <li class="nav-item" data-section="client">
+        <div class="nav-dot"></div>
+        <a href="#client">The Client</a>
+      </li>
+      <li class="nav-item" data-section="problem">
+        <div class="nav-dot"></div>
+        <a href="#problem">The Problem</a>
+      </li>
+      <li class="nav-item" data-section="research">
+        <div class="nav-dot"></div>
+        <a href="#research">Research</a>
+      </li>
+      <li class="nav-item" data-section="synthesis">
+        <div class="nav-dot"></div>
+        <a href="#synthesis">Synthesis</a>
+      </li>
+      <li class="nav-item" data-section="solution">
+        <div class="nav-dot"></div>
+        <a href="#solution">Solution</a>
+      </li>
+      <li class="nav-item" data-section="reflection">
+        <div class="nav-dot"></div>
+        <a href="#reflection">Reflection</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- PROJECT HEADER -->
+    <div class="project-header">
+      <div class="project-header-top">
+        <div class="project-header-name">
+          AT Hacker Group
+        </div>
+        <div class="project-header-right">
+          <span class="tag">Service Design</span>
+          <span class="tag">Systems Thinking</span>
+          <span class="tag">Accessibility</span>
+          <span class="project-year">2024</span>
+        </div>
+      </div>
+      <p class="project-subtitle">Redesigning the repair journey of broken assistive technology at iHOPE, a NYC special education school for students with brain injuries.</p>
+    </div>
+
+    <!-- HERO IMAGE -->
+    <div class="hero-image">
+      <img src="assets/images/ih-hero.png"
+           alt="iHope — AT Hacker Group service overview"
+           style="width:100%; border-radius:12px;" />
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="section" id="overview">
+
+      <h1>Freeing iHOPE's AT team from the repair bench — by building a structured, volunteer-powered fix service that actually sticks.</h1>
+
+      <div class="callout">
+        <div class="callout-label">The Core Tension</div>
+        <p>iHOPE's Assistive Technology team is the heartbeat of the school — evaluating, adapting, and training students on the devices that give them voice, movement, and independence. But broken devices were consuming hours each week. We were asked to fix the repair pipeline. What we found was a deeper problem: the wrong people were doing the soldering.</p>
+      </div>
+
+      <div class="meta-grid">
+        <div>
+          <div class="meta-label">Client</div>
+          <div class="meta-value">iHOPE<br>International Academy of Hope</div>
+        </div>
+        <div>
+          <div class="meta-label">Team</div>
+          <div class="meta-value">JuJu, Sophie,<br>Yuxuan</div>
+        </div>
+        <div>
+          <div class="meta-label">Role</div>
+          <div class="meta-value">Service Design<br>Research & Synthesis</div>
+        </div>
+        <div>
+          <div class="meta-label">Duration</div>
+          <div class="meta-value">15 weeks<br>Service Design Course</div>
+        </div>
+      </div>
+
+      <p>iHOPE's AT team spends significant time repairing broken devices instead of supporting students. We redesigned the repair journey by creating the AT Hacker Group — a structured, volunteer-powered repair service that frees the AT team to focus on what matters most: the kids.</p>
+    </section>
+
+    <!-- THE CLIENT -->
+    <section class="section" id="client">
+      <div class="section-label">Context</div>
+      <h2>iHOPE & the Assistive Technology Team</h2>
+
+      <p>The International Academy of Hope is a specialized private school in New York City serving students ages 5–21 with Traumatic Brain Injury (TBI), Acquired Brain Injury (ABI), and other brain-based disorders. What distinguishes iHOPE is its foundational philosophy: decisions are made by an educational team — not a medical hierarchy — with a focus on adaptation and participation.</p>
+
+      <div class="callout">
+        <div class="callout-label">iHOPE's Motto</div>
+        <p>"No readiness." Students don't need to reach any cognitive prerequisite before learning with assistive technology. Every student gets access to AT from day one.</p>
+      </div>
+
+      <p>The AT team sits at the center of everything. With 5–6 members each managing roughly 10 students, they serve as the bridge between teachers, therapists, paraprofessionals, students, families, and external vendors. Their role spans eight distinct responsibilities:</p>
+      <div class="resp-chips">
+        <span class="resp-chip">Evaluate</span>
+        <span class="resp-chip">Adapt</span>
+        <span class="resp-chip">Build</span>
+        <span class="resp-chip">Train</span>
+        <span class="resp-chip">Consult</span>
+        <span class="resp-chip">Measure</span>
+        <span class="resp-chip">Report</span>
+        <span class="resp-chip resp-chip--fix">Fix ← most resource-intensive</span>
+      </div>
+
+      <blockquote class="pull-quote">
+        <p>"The body shouldn't be a handcuff to their heads."</p>
+        <cite>Gretchen Hanser, Director of AT & Literacy Instruction</cite>
+      </blockquote>
+
+      <p>This quote is the foundation of iHOPE's work — and the lens through which we understood the stakes of every hour lost to repair work.</p>
+    </section>
+
+    <!-- THE PROBLEM -->
+    <section class="section" id="problem">
+      <div class="section-label">Problem</div>
+      <h2>A Broken Bin That Never Empties</h2>
+
+      <p>The Assistive Technology team manages a constant flow of broken devices — communication boards, switches, eye-gaze systems, specialized keyboards — each unique to the student using it. Three pain points formed the core of the problem.</p>
+
+      <div class="pain-points-grid">
+        <div class="pain-point">
+          <span class="pp-label">Volume</span>
+          <p>The broken bin fills at 4–5 devices per week on average, and up to 6–10 during peak periods. Devices pile up faster than they can be addressed.</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Bottleneck</span>
+          <p>The AT team are the only people with the knowledge and tools to fix broken devices. No one else in the school can step in, even for simple repairs.</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Knowledge Gap</span>
+          <p>Teachers and paras want to help but can't. Guidelines exist but aren't enough. Each student uses different tools — and some devices cost $800+, too expensive to experiment on.</p>
+        </div>
+      </div>
+
+      <div class="broke-grid">
+        <img src="assets/images/ih-broke1.png" alt="Broken AT device — environment photo 1" />
+        <img src="assets/images/ih-broke2.png" alt="Broken AT device — environment photo 2" />
+        <img src="assets/images/ih-broke3.png" alt="Broken AT device — environment photo 3" />
+        <img src="assets/images/ih-broke4.png" alt="Broken AT device — environment photo 4" />
+      </div>
+
+      <p>We mapped the entire repair journey, from the moment a teacher borrows an AT device from the cabinet to (ideally) its return to the classroom. The process involves a QR code form, an AT station visit, and a weekly rotation where one AT team member checks the broken bin. Some devices are resolved quickly. Many are not.</p>
+
+      <div class="img-wide" style="margin:24px 0;">
+        <img src="assets/images/ih-serviceprint.gif" alt="Service blueprint — the complete repair journey of a broken AT device" style="width:100%; border-radius:10px; display:block;" />
+      </div>
+
+      <div class="quote-with-avatar">
+        <div class="quote-avatar">
+          <img src="assets/images/ih-gretchen.png" alt="Gretchen Hanser" />
+        </div>
+        <blockquote class="pull-quote">
+          <p>"Fixing and soldering is not a good use of time. We need to spend more time with kids!"</p>
+          <cite>Gretchen Hanser, Director of AT & Literacy Instruction</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="section" id="research">
+      <div class="section-label">Discovery</div>
+      <h2>Getting Inside the System</h2>
+
+      <p>Three key findings shaped everything that followed:</p>
+
+      <div class="insight">
+        <span class="insight-num">01</span>
+        <div class="insight-body">
+          <span class="insight-title">Volunteers Have Been Tried — and Failed</span>
+          <span class="insight-desc">iHOPE had previously brought in volunteers to help with soldering. They found people organically through Art Speaks events, university field work, and neighborhood partnerships. But the pattern was consistent: long onboarding time, volunteers don't return, coordination is difficult, and it ends up costing the AT team more effort than it saves.</span>
+        </div>
+      </div>
+
+      <div class="insight">
+        <span class="insight-num">02</span>
+        <div class="insight-body">
+          <span class="insight-title">"Fix" Is High-Tech but Low Strategic Value</span>
+          <span class="insight-desc">Of the AT team's eight responsibilities, "Fix" is arguably the most technically demanding — requiring soldering, hardware diagnostics, and device-specific knowledge. But it contributes the least to student outcomes compared to the other seven. The team was spending senior-level time on work that, with the right setup, someone else could do.</span>
+        </div>
+      </div>
+
+      <div class="insight">
+        <span class="insight-num">03</span>
+        <div class="insight-body">
+          <span class="insight-title">The Ideal Volunteer Already Exists — They Just Need Structure</span>
+          <span class="insight-desc">Gretchen described her dream hire: "a retired engineer." What she wanted wasn't just hands — it was someone skilled, consistent, and easy to communicate with. When we looked at what universities like SVA, NYU, and Columbia produce, we saw exactly that profile in undergraduate students interested in electronics and social impact.</span>
+        </div>
+      </div>
+
+      <blockquote class="pull-quote">
+        <p>"It's a lot of investment and work on our time to train people who will come once or twice."</p>
+        <cite>iHOPE AT team member</cite>
+      </blockquote>
+
+      <div class="img-grid-2" style="margin-top:32px;">
+        <div>
+          <img src="assets/images/ih-research3.JPG" alt="Synthesis whiteboard — themes, observations and key insights" style="width:100%; border-radius:10px; display:block;" />
+          <p style="font-size:11px; color:#aaa; font-style:italic; margin-top:8px;">Themes & insights whiteboard from synthesis session</p>
+        </div>
+        <div>
+          <img src="assets/images/ih-research2.JPG" alt="Problem framing — what we know vs what we don't know" style="width:100%; border-radius:10px; display:block;" />
+          <p style="font-size:11px; color:#aaa; font-style:italic; margin-top:8px;">Problem framing — the "retired engineer" discovery</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SYNTHESIS -->
+    <section class="section" id="synthesis">
+      <div class="section-label">Analysis</div>
+      <h2>Naming the Real Problem</h2>
+
+      <p>Our stakeholder mapping placed the AT team at the center of a dense network: students, paras, teachers, therapists, vendors, government bodies, and external organizations all depending on them. The fix-solder role sits at the outer edge of their core mission — but without a better system, it consumes the center.</p>
+
+      <div class="callout">
+        <div class="callout-label">How Might We</div>
+        <p>How might we create a reliable, skilled, and low-barrier repair support system so the AT team can spend more time with students?</p>
+      </div>
+
+      <div class="img-wide" style="margin-top:28px;">
+        <img src="assets/images/ih-research1.JPG" alt="HMW brainstorming wall with post-its and ideation sketches" style="width:100%; border-radius:10px; display:block;" />
+        <p style="font-size:11px; color:#aaa; font-style:italic; margin-top:8px;">HMW ideation session — exploring how to restructure the volunteer repair model</p>
+      </div>
+
+    </section>
+
+    <!-- SOLUTION -->
+    <section class="section" id="solution">
+      <div class="section-label">Design</div>
+      <h2>The AT Hacker Group</h2>
+
+      <p>The AT Hacker Group is a structured, volunteer-powered repair service built around three design principles: <strong>skill matching</strong>, <strong>long-term commitment</strong>, and <strong>volunteer-powered capacity</strong>. Unlike ad-hoc volunteer efforts, it's designed to work because of its structure — not despite the lack of one.</p>
+
+      <p>Volunteers are undergraduate students — starting with SVA, scalable to NYU and Columbia — interested in electronics, design, and social impact. Crucially, they receive paid compensation. This changes the volunteer relationship from charity to collaboration.</p>
+
+      <div class="stage-tabs">
+        <div class="stage-tab-nav">
+          <button class="stage-tab-btn active" data-tab="onboarding">Onboarding</button>
+          <button class="stage-tab-btn" data-tab="workshop">Workshop</button>
+          <button class="stage-tab-btn" data-tab="evaluating">Evaluating</button>
+        </div>
+        <div class="stage-tab-content">
+          <div class="stage-tab-panel active" id="tab-onboarding">
+            <img src="assets/images/ih-onboarding.png" alt="Onboarding — AT Basics Guidebook and Tester Kit" />
+            <p class="stage-tab-caption">A structured onboarding session (at SVA, minimal travel friction) gives volunteers two things: an AT Basics Guidebook covering disability awareness and iHOPE's philosophy, and an AT Tester Kit — a pouch containing commonly-used devices with a video guide explaining how each one is used by students. Volunteers understand the user before they touch the repair.</p>
+          </div>
+          <div class="stage-tab-panel" id="tab-workshop">
+            <img src="assets/images/ih-workshop.png" alt="Workshop — biweekly repair session at iHOPE" />
+            <p class="stage-tab-caption">Biweekly or monthly repair sessions at iHOPE. Volunteers arrive with categorized repair kits — broken devices grouped by type, each paired with a QR code linking to step-by-step video tutorials. The format is inspired by kit-based learning: structured enough to self-direct, open enough to tinker and innovate.</p>
+          </div>
+          <div class="stage-tab-panel" id="tab-evaluating">
+            <img src="assets/images/ih-evaluate.png" alt="Evaluating — Notion tracking dashboard and repair checklist" />
+            <p class="stage-tab-caption">A Notion tracking dashboard logs every device: name, category, issue, status, deadline, assigned volunteer. Volunteers document their repair process; the AT team verifies each fix with a checklist. If it works → back to the classroom. If not → it re-enters the cycle with context, not silence.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:32px;">Each stage of the AT Hacker Group maps directly back to iHOPE's existing repair process — from the moment a device enters the broken bin to its return to the classroom. Rather than replacing what the AT team already does, the model slots volunteers into the most time-consuming steps, freeing the team to focus on evaluation, adaptation, and student support.</p>
+
+      <div class="img-wide" style="margin:24px 0;">
+        <img src="assets/images/ih-solution%20map.png" alt="Solution map — how the AT Hacker Group maps back to the broken device repair process" style="width:100%; border-radius:10px; display:block;" />
+      </div>
+    </section>
+
+    <!-- REFLECTION -->
+    <section class="section" id="reflection">
+      <div class="section-label">Learning</div>
+      <h2>What This Project Taught Us</h2>
+
+      <ul class="numbered-list">
+        <li>
+          <span class="num">1</span>
+          <div>
+            <span class="item-head">The Real Problem Was Rarely the Stated Problem</span>
+            iHOPE came to us with a broken device problem. What we found was a time allocation problem — the AT team's most skilled hours were going to the lowest-value task. Shadowing and immersive research made that visible. A survey never would have.
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div>
+            <span class="item-head">The Best Solution Wasn't Technology</span>
+            Every instinct in a design course pushes toward apps and platforms. What iHOPE needed was better human infrastructure — clearer roles, more sustainable incentives, and a feedback loop that kept devices out of the "stays forever" trap. The Notion tracker matters far less than the workshop culture it supports.
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <span class="item-head">Service Design in Special Education Requires Whole-Ecosystem Empathy</span>
+            We couldn't design for students without designing for the AT team. We couldn't design for the AT team without understanding the school's culture, the volunteer pipeline, and the university ecosystem. A solution that works for one node but burdens another isn't a solution — it's a problem relocation.
+          </div>
+        </li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-label">What We'd Do Differently</div>
+        <p>Test the onboarding kit with real volunteers earlier in the process. Co-design the Notion tracker with the AT team rather than for them. Explore liability implications of volunteers handling student equipment before proposing the model to administrators.</p>
+      </div>
+
+      <hr class="divider" />
+      <div class="next-project">
+        <div class="next-project-label">Next Project</div>
+        <a href="case-study-3.html" class="next-project-card">
+          <div class="next-project-thumb">
+            <img src="assets/images/jb-hero.jpg" alt="Jubo DC">
+          </div>
+          <div class="next-project-info">
+            <div class="next-project-body">
+              <span class="next-project-title">Jubo DC</span>
+              <span class="next-project-desc">Helping daycare institution staff schedule and record patient care without the paperwork burden.</span>
+              <div class="next-project-meta">
+                <span class="tag">UX Research</span>
+                <span class="tag">Product Design</span>
+                <span class="next-project-year">2024</span>
+              </div>
+            </div>
+            <span class="next-project-arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+
+<!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Sophie Lee © 2026</span>
+    <div class="footer-contact">
+      <button class="footer-email" onclick="copyEmail(this)" aria-label="Copy email address">
+        ylee32@sva.edu
+        <span class="copy-hint">click to copy</span>
+        <span class="copy-confirm">copied!</span>
+      </button>
+      <a href="https://www.linkedin.com/in/yi-hsuan-lee-ab3321158/" target="_blank" class="footer-linkedin">LinkedIn ↗</a>
+    </div>
+  </footer>
+</div><!-- /page-wrap -->
+
+<script>
+  const progress = document.getElementById('scrollProgress');
+  const mainNav = document.getElementById('mainNav');
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.body.scrollHeight - window.innerHeight;
+    progress.style.width = (scrolled / total * 100) + '%';
+    mainNav.classList.toggle('scrolled', scrolled > 10);
+  });
+
+  const sections = document.querySelectorAll('.section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.dataset.section === entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  navItems.forEach(item => {
+    item.querySelector('a').addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(e.target.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Stage tabs
+  document.querySelectorAll('.stage-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.stage-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.stage-tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    });
+  });
+
+</script>
+<script src="assets/js/cs-skeleton.js"></script>
+<script src="assets/js/lightbox.js" defer></script>
+<script src="assets/js/skeleton.js" defer></script>
+<script src="assets/js/scroll-reveal.js" defer></script>
+</body>
+</html>

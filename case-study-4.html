@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industrious — Connection in Shared Workspaces</title>
+  <style>
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Extralight.woff2') format('woff2');
+      font-weight: 200;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2');
+      font-weight: 200;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2');
+      font-weight: 600;
+      font-style: italic;
+      font-display: block;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --text: #1a1a1a; --muted: #999; --border: #e8e8e8; --bg: #ffffff;
+      --white: #ffffff; --dark: #2a2a2a; --mid: #666666; --subtle: #cccccc;
+      --surface: #f5f5f5; --sidebar-w: 210px; --dot-active: #1a1a1a; --dot-inactive: #d4d4d4;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'PP Mori', system-ui, -apple-system, sans-serif; background: radial-gradient(ellipse 800px 700px at calc(100% + 80px) -120px, rgba(255, 155, 70, 0.40), transparent 68%), radial-gradient(ellipse 680px 600px at -100px 18%, rgba(255, 215, 90, 0.30), transparent 68%), radial-gradient(ellipse 600px 520px at 88% 42%, rgba(255, 120, 80, 0.24), transparent 68%), radial-gradient(ellipse 680px 600px at -60px 68%, rgba(255, 190, 100, 0.28), transparent 68%), radial-gradient(ellipse 560px 480px at calc(100% - 80px) 84%, rgba(255, 100, 90, 0.20), transparent 68%), var(--bg); color: var(--text); font-size: 13.5px; line-height: 1.7; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); transition: box-shadow 0.2s; }
+    nav.scrolled { box-shadow: 0 1px 0 var(--border); }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 48px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-name { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-resume { border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px !important; letter-spacing: 0.06em !important; transition: border-color 0.15s, color 0.15s !important; }
+    .nav-resume:hover { border-color: #ccc !important; color: var(--text) !important; }
+    .scroll-progress { position: fixed; top: 52px; left: 0; height: 2px; background: var(--text); width: 0%; z-index: 200; transition: width 0.08s linear; }
+    .page-wrap { max-width: 1100px; margin: 0 auto; }
+    .layout { display: flex; min-height: 100vh; padding-top: 52px; }
+    .sidebar { position: sticky; top: 52px; align-self: flex-start; flex-shrink: 0; width: var(--sidebar-w); height: calc(100vh - 52px); padding: 36px 24px 36px 32px; display: flex; flex-direction: column; overflow-y: auto; }
+    .back-link { display: flex; align-items: center; gap: 6px; text-decoration: none; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 32px; transition: color 0.15s; }
+    .back-link:hover { color: var(--text); }
+    .sidebar-meta { margin-bottom: 28px; }
+    .sidebar-label { font-size: 11px; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+    .sidebar-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+    .nav-list { list-style: none; }
+    .nav-item { display: flex; align-items: center; gap: 11px; padding: 4px 0; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dot-inactive); flex-shrink: 0; transition: background 0.2s, transform 0.2s; }
+    .nav-item.active .nav-dot { background: var(--dot-active); transform: scale(1.25); }
+    .nav-item a { font-size: 12px; letter-spacing: 0.055em; text-decoration: none; color: var(--muted); transition: color 0.15s; }
+    .nav-item.active a, .nav-item:hover a { color: var(--text); }
+    .main { flex: 1; min-width: 0; padding: 52px clamp(24px, 5vw, 72px) 120px clamp(24px, 4vw, 56px); }
+    .section { padding-top: 72px; padding-bottom: 8px; }
+    .section:first-child { padding-top: 64px; }
+    .section-label { font-size: clamp(11px, 0.9vw, 12px); letter-spacing: 0.14em; color: var(--muted); margin-bottom: 16px; }
+    h1 { font-size: clamp(22px, 2.4vw, 36px); font-family: 'PP Mori', system-ui, sans-serif; font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; margin-bottom: 32px; }
+    h2 { font-size: clamp(16px, 1.6vw, 22px); font-family: 'PP Mori', system-ui, sans-serif; font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 20px; }
+    p { color: #3d3d3d; margin-bottom: 20px; max-width: 100%; font-size: clamp(13px, 1vw, 15px); }
+    .callout { border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 28px 0; max-width: 100%; background: #fafafa; }
+    .callout-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .callout p { margin: 0; color: #2a2a2a; font-size: clamp(15px, 1.1vw, 17px); line-height: 1.65; max-width: none; }
+    .meta-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; margin: 36px 0 40px; max-width: 100%; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .meta-label { font-size: clamp(10px, 0.8vw, 12px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .meta-value { font-size: clamp(14px, 1.1vw, 16px); color: var(--text); line-height: 1.6; }
+    .numbered-list { list-style: none; margin: 22px 0; max-width: 100%; }
+    .numbered-list li { display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); font-size: clamp(15px, 1.1vw, 17px); color: #3d3d3d; line-height: 1.6; }
+    .numbered-list li:first-child { border-top: 1px solid var(--border); }
+    .numbered-list .num { flex-shrink: 0; width: 18px; color: var(--muted); font-size: 12px; padding-top: 1px; }
+    .numbered-list .item-head { font-weight: 500; color: var(--text); display: block; margin-bottom: 3px; }
+    .img-placeholder { background: #f2f2f2; border-radius: 10px; display: flex; align-items: flex-end; padding: 14px 18px; }
+    .img-caption { font-size: 11px; color: #aaa; font-style: italic; }
+    .img-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 28px 0; max-width: 100%; }
+    .img-grid-2 .img-placeholder { aspect-ratio: 4/3; }
+    .img-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 28px 0; max-width: 100%; }
+    .img-grid-3 .img-placeholder { aspect-ratio: 4/3; }
+    .img-wide { max-width: 100%; margin: 28px 0; }
+    .img-wide .img-placeholder { aspect-ratio: 16/7; }
+    .project-header { padding-bottom: 20px; margin-bottom: 0; border-bottom: 1px solid var(--border); }
+    .project-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 8px; }
+    .project-header-name { font-size: clamp(12px, 1.1vw, 14px); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .project-header-name a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+    .project-header-name a:hover { color: var(--text); }
+    .project-header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .tag { font-size: 11px; letter-spacing: 0.04em; padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px; color: #555; white-space: nowrap; background: #fafafa; }
+    .project-year { font-size: 11px; color: var(--muted); white-space: nowrap; padding-left: 4px; }
+    .project-subtitle { font-size: 13.5px; color: var(--muted); margin: 0; max-width: none; }
+    .pull-quote { border-left: 2px solid var(--text); margin: 32px 0; padding: 4px 0 4px 24px; max-width: min(600px, 100%); }
+    .pull-quote p { font-size: clamp(17px, 1.6vw, 22px); font-weight: 400; line-height: 1.5; letter-spacing: -0.01em; color: var(--text); margin: 0 0 8px; max-width: none; }
+    .pull-quote cite { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-style: normal; }
+    .key-point { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 20px 24px; margin: 32px 0; max-width: 100%; }
+    .kp-label { display: block; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .key-point p { font-size: clamp(14px, 1.1vw, 15px); color: var(--text) !important; line-height: 1.6; margin: 0; max-width: none; }
+    .insight-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 28px 0; }
+    .insight-card { border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; background: #fafafa; }
+    .ic-num { font-size: 28px; font-weight: 300; color: var(--subtle); letter-spacing: -0.03em; display: block; margin-bottom: 12px; line-height: 1; }
+    .ic-title { font-size: clamp(13px, 1vw, 15px); font-weight: 500; color: var(--text); display: block; margin-bottom: 8px; line-height: 1.3; }
+    .ic-desc { font-size: clamp(12px, 0.9vw, 13px); color: var(--mid); line-height: 1.6; margin: 0; }
+    .rec-block { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 28px 0; }
+    .rec-header { padding: 20px 24px; background: #fafafa; border-bottom: 1px solid var(--border); }
+    .rec-num { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; display: block; }
+    .rec-title { font-size: clamp(16px, 1.3vw, 19px); font-weight: 500; color: var(--text); line-height: 1.2; }
+    .rec-body { padding: 20px 24px; }
+    .rec-body p { font-size: clamp(14px, 1.1vw, 16px); margin-bottom: 12px; }
+    .rec-body p:last-child { margin-bottom: 0; }
+    .hero-image { margin: 28px 0 0; }
+    .hero-image .img-placeholder { aspect-ratio: 16/9; border-radius: 12px; background: #f0f0f0; max-width: 100%; display: flex; align-items: flex-end; padding: 16px 20px; }
+    .next-project { margin-top: 52px; }
+    .next-project-label { font-size: clamp(11px, 0.9vw, 12px); letter-spacing: 0.14em; color: var(--muted); margin-bottom: 16px; }
+    .next-project-card { display: block; text-decoration: none; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; max-width: 100%; }
+    .next-project-card:hover { border-color: #bbb; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .next-project-thumb { width: 100%; aspect-ratio: 16/5; background: #f2f2f2; overflow: hidden; }
+    .next-project-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .next-project-info { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); }
+    .next-project-body { display: flex; flex-direction: column; gap: 5px; }
+    .next-project-title { font-size: clamp(15px, 1.3vw, 18px); font-weight: 500; color: var(--text); letter-spacing: -0.01em; line-height: 1.2; }
+    .next-project-desc { font-size: 13px; color: var(--mid); line-height: 1.5; }
+    .next-project-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .next-project-year { font-size: 11px; color: var(--muted); padding-left: 2px; }
+    .next-project-arrow { font-size: 18px; color: var(--muted); flex-shrink: 0; transition: color 0.15s, transform 0.15s; }
+    .next-project-card:hover .next-project-arrow { color: var(--text); transform: translateX(4px); }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px clamp(24px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-name {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .footer-contact {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-email {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-email:hover { color: var(--black); }
+    .copy-hint {
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .footer-email:hover .copy-hint { opacity: 1; }
+    .copy-confirm {
+      position: absolute;
+      right: 0;
+      top: -26px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--black);
+      background: #efefef;
+      padding: 3px 8px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .footer-email.copied .copy-confirm { opacity: 1; }
+    .footer-linkedin {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-linkedin:hover { color: var(--black); }
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .footer-contact { gap: 16px; }
+    }
+    @media (max-width: 1024px) { :root { --sidebar-w: 180px; } .main { padding: 44px 40px 100px 40px; } .meta-grid { grid-template-columns: repeat(3, 1fr); } .insight-cards { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .sidebar { display: none; } .main { padding: 28px 24px 80px; } .project-header-top { flex-direction: column; gap: 12px; } .project-header-right { justify-content: flex-start; } .meta-grid { grid-template-columns: repeat(2, 1fr); } .img-grid-2, .img-grid-3, .insight-cards { grid-template-columns: 1fr; } footer { padding: 20px 24px; flex-wrap: wrap; gap: 12px; } }
+    @media (max-width: 480px) { h1 { font-size: 24px; } h2 { font-size: 18px; } p { font-size: 16px; } }
+  </style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Work</a>
+      <a href="about.html">About</a>
+      
+    </div>
+  </div>
+</nav>
+<div class="page-wrap">
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 2L4 6L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Projects
+    </a>
+    <div class="sidebar-meta">
+      <div class="sidebar-label">Case Study</div>
+      <div class="sidebar-title">Industrious</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-section="overview"><div class="nav-dot"></div><a href="#overview">Overview</a></li>
+      <li class="nav-item" data-section="background"><div class="nav-dot"></div><a href="#background">Background</a></li>
+      <li class="nav-item" data-section="research"><div class="nav-dot"></div><a href="#research">Research</a></li>
+      <li class="nav-item" data-section="insights"><div class="nav-dot"></div><a href="#insights">Insights</a></li>
+      <li class="nav-item" data-section="recommendations"><div class="nav-dot"></div><a href="#recommendations">Recommendations</a></li>
+      <li class="nav-item" data-section="reflection"><div class="nav-dot"></div><a href="#reflection">Reflection</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <div class="project-header">
+      <div class="project-header-top">
+        <div class="project-header-name">
+          Industrious &#8212; Connection in Shared Workspaces
+          <a href="case-study-3.html" title="Next Project">&#8594;</a>
+        </div>
+        <div class="project-header-right">
+          <span class="tag">UX Research</span>
+          <span class="tag">Space Design</span>
+          <span class="tag">SVA x Industrious</span>
+          <span class="project-year">2024</span>
+        </div>
+      </div>
+      <p class="project-subtitle">A research study on why authentic connection fails in coworking spaces &#8212; and three design directions to fix it.</p>
+    </div>
+    <div class="hero-image">
+      <img src="assets/images/id-hero.jpg"
+           alt="Industrious coworking space — shared amenity areas and common zones"
+           style="width:100%; border-radius:12px;" />
+    </div>
+
+    <section class="section" id="overview">
+      <h1>Discovering that connection in coworking spaces fails not because people don&#8217;t want it &#8212; but because the spaces force performance instead of enabling authenticity.</h1>
+      <div class="callout">
+        <div class="callout-label">Opening Finding</div>
+        <p>&#8220;Believe it or not, there was probably less than 10 people for that whole building that came&#8230; (Japanese Stitching Event)&#8230; Less than 10 people.&#8221; &#8212; Industrious Worker</p>
+      </div>
+      <div class="meta-grid">
+        <div><div class="meta-label">Role</div><div class="meta-value">UX Researcher</div></div>
+        <div><div class="meta-label">Team</div><div class="meta-value">Feifey &#183; Seren &#183; Sophie</div></div>
+        <div><div class="meta-label">Methods</div><div class="meta-value">Interviews &#183; Affinity Mapping &#183; Pattern Recognition</div></div>
+        <div><div class="meta-label">Participants</div><div class="meta-value">9 interviews<br>3 Members &#183; 5 Workers &#183; 1 Expert</div></div>
+        <div><div class="meta-label">Context</div><div class="meta-value">SVA IxD &#183; Research Methods<br>SVA &#215; Industrious</div></div>
+      </div>
+    </section>
+
+    <section class="section" id="background">
+      <div class="section-label">Background</div>
+      <h2>Industrious has great infrastructure. Connection isn&#8217;t happening anyway.</h2>
+      <p>Industrious is a premium coworking space operating across major US cities. The physical product is strong &#8212; well-designed offices, high-quality amenities, professional support. But member retention depends on more than infrastructure. It depends on whether people feel they belong.</p>
+      <p>The challenge our team was given: why aren&#8217;t workers connecting more, and what would it take to change that? Industrious already had community events, a member app, and shared spaces designed for interaction. Yet engagement was low, events were sparsely attended, and members described working alongside strangers as largely transactional.</p>
+      <p>The business goal was clear: increase interaction between workers, foster belonging and engagement, and ultimately improve member retention. But the question wasn&#8217;t what to build &#8212; it was why the existing efforts weren&#8217;t working.</p>
+      <div class="callout">
+        <div class="callout-label">Research Goal</div>
+        <p>Understand the real barriers to authentic connection in shared workspaces &#8212; and identify design opportunities that address root causes, not surface symptoms.</p>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="section-label">Research</div>
+      <h2>Four-phase process, nine conversations, three patterns</h2>
+      <p>We ran a structured research process &#8212; planning and recruitment, interviews, analysis and synthesis, then ideation. The 9 participants represented three groups with different relationships to shared workspaces: 3 Industrious members, 5 office-hybrid workers, and 1 workplace operations expert.</p>
+      <ul class="numbered-list">
+        <li><span class="num">1</span><div><span class="item-head">Research planning and preparation</span>We defined our research goal, recruited participants across three profiles, and developed interview questions designed to surface both surface behavior and underlying need.</div></li>
+        <li><span class="num">2</span><div><span class="item-head">Data collection &#8212; semi-structured interviews</span>Nine interviews, each documented with participant snapshots and key quotes. We asked about daily work routines, how participants felt about shared spaces, what made them engage or disengage, and what connection in the workplace actually looked like for them.</div></li>
+        <li><span class="num">3</span><div><span class="item-head">Analysis and synthesis &#8212; affinity mapping and pattern recognition</span>We coded the data, clustered quotes and observations through affinity mapping, and looked for patterns across participant types. Three distinct themes emerged &#8212; each pointing to a different failure mode in how shared workspaces currently approach connection.</div></li>
+        <li><span class="num">4</span><div><span class="item-head">Ideation and recommendations</span>From the three themes, we developed HMW statements and generated design directions. We prioritized interventions that worked with human behavior rather than against it &#8212; building on moments people naturally connect, rather than engineering new ones.</div></li>
+      </ul>
+      <div class="img-wide">
+        <div class="img-placeholder"><span class="img-caption">Affinity mapping session &#8212; participant quotes clustered by theme</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="insights">
+      <div class="section-label">Insights</div>
+      <h2>Three themes that explain why connection isn&#8217;t happening</h2>
+      <p>The patterns across our nine interviews converged into three core insights. Each one reframed a common assumption about why people don&#8217;t engage in shared workspaces.</p>
+      <div class="insight-cards">
+        <div class="insight-card">
+          <span class="ic-num">01</span>
+          <span class="ic-title">Can I be myself here?</span>
+          <p class="ic-desc">People avoid office events not because they don&#8217;t see the value &#8212; but because they&#8217;re unsure they can show up without performing. Forced networking and contextless small talk feel unsafe.</p>
+        </div>
+        <div class="insight-card">
+          <span class="ic-num">02</span>
+          <span class="ic-title">Control over environment and work style</span>
+          <p class="ic-desc">Workers aren&#8217;t choosing between focus and collaboration. They&#8217;re seeking an in-between state &#8212; mentally present but socially available &#8212; and current workplace design doesn&#8217;t support it.</p>
+        </div>
+        <div class="insight-card">
+          <span class="ic-num">03</span>
+          <span class="ic-title">Appreciation, bonding and the role of shared spaces</span>
+          <p class="ic-desc">When top-down systems fail to provide human warmth, people turn to bottom-up connections. Shared office spaces like Industrious can bridge the gap that individual employers can&#8217;t.</p>
+        </div>
+      </div>
+
+      <h2 style="font-size: clamp(18px, 1.6vw, 24px); margin-top: 48px;">Theme 1: Can I be myself here?</h2>
+      <p>The most consistent finding across participant types was the fear of forced performance. People weren&#8217;t hesitating because they didn&#8217;t value connection &#8212; they were hesitating because they didn&#8217;t know if they could show up authentically without being expected to network, make small talk with strangers, or perform a version of themselves.</p>
+      <blockquote class="pull-quote">
+        <p>&#8220;I am past trying to impress anyone &#8212; I don&#8217;t need to put on ears. I would rather go to a bar with one or two people I know really well where we can just be ourselves.&#8221;</p>
+        <cite>&#8212; Industrious Member</cite>
+      </blockquote>
+      <p>Workers avoided events that required unclear social obligations. They preferred interactions that were topic-driven, utility-based, or embedded in shared tasks rather than explicitly social &#8212; short, task-adjacent moments at the coffee bar or cafeteria consistently outperformed programmed events.</p>
+
+      <h2 style="font-size: clamp(18px, 1.6vw, 24px); margin-top: 48px;">Theme 2: The in-between state</h2>
+      <div class="key-point">
+        <span class="kp-label">Core Insight</span>
+        <p>Workers aren&#8217;t choosing between focus and collaboration. They&#8217;re seeking a way to stay mentally focused while remaining socially present &#8212; and current workplace design forces a binary choice that doesn&#8217;t reflect how people actually work.</p>
+      </div>
+      <p>Participants described wanting to be aware of what was happening around them &#8212; knowing who was there, being available for a quick question &#8212; without being interrupted or feeling socially obligated. Headphones became a proxy for &#8220;do not disturb&#8221; because there was no built-in spatial signal for that state. The environment offered only isolation or openness, nothing in between.</p>
+      <blockquote class="pull-quote">
+        <p>&#8220;It would be so much easier to just like go over and be like, &#8216;Hey, can you help me with this really quick.&#8217;&#8221;</p>
+        <cite>&#8212; Hybrid Worker</cite>
+      </blockquote>
+
+      <h2 style="font-size: clamp(18px, 1.6vw, 24px); margin-top: 48px;">Theme 3: Bottom-up warmth as the real driver</h2>
+      <p>What kept people at their jobs &#8212; and invested in their workplace &#8212; wasn&#8217;t the company&#8217;s top-down community initiatives. It was the team, the familiarity, the small moments of peer recognition. When organizations failed to provide human warmth at the system level, people built it informally. Industrious sits in a unique position: it can be the infrastructure for cross-company, peer-driven connection that individual employers can&#8217;t provide.</p>
+      <blockquote class="pull-quote">
+        <p>&#8220;We have a good team. That&#8217;s why I&#8217;m still there. That&#8217;s it for me. It&#8217;s important to work with people that I can get along with.&#8221;</p>
+        <cite>&#8212; Hybrid Worker</cite>
+      </blockquote>
+      <div class="img-grid-2">
+        <div class="img-placeholder"><span class="img-caption">Theme 1 &#8212; forced performance as the barrier to connection</span></div>
+        <div class="img-placeholder"><span class="img-caption">Theme 3 &#8212; Industrious as a bridge across companies and teams</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="recommendations">
+      <div class="section-label">Recommendations</div>
+      <h2>Three design directions built on how people naturally connect</h2>
+      <p>Each recommendation maps directly to a research finding. The goal wasn&#8217;t to introduce new behaviors, but to design environments and systems that make existing connection behaviors easier, safer, and more likely to happen.</p>
+
+      <div class="rec-block">
+        <div class="rec-header">
+          <span class="rec-num">Recommendation 01</span>
+          <div class="rec-title">Low-stakes conversation starters at natural touchpoints</div>
+        </div>
+        <div class="rec-body">
+          <p>Research showed that small, daily moments &#8212; getting coffee, eating lunch, waiting for an elevator &#8212; are where workers naturally start conversations. Rather than programmed events, we proposed embedding conversation-starting mechanisms into these existing touchpoints.</p>
+          <p>Examples: a coffee bean voting display at the caf&#233; (&#8220;Which bean next time? Kenya or Columbia&#8221;), a hand-illustrated local restaurant map on dining tables, a peer-activity screen in the elevator lobby. None of these require social commitment &#8212; they create a shared object of attention that lowers the barrier to the first word.</p>
+        </div>
+      </div>
+
+      <div class="img-grid-3">
+        <div class="img-placeholder"><span class="img-caption">Tea / Coffee Bean Voting at the caf&#233;</span></div>
+        <div class="img-placeholder"><span class="img-caption">Local restaurant map on dining tables</span></div>
+        <div class="img-placeholder"><span class="img-caption">Peer activity screen at elevator lobby</span></div>
+      </div>
+
+      <div class="rec-block">
+        <div class="rec-header">
+          <span class="rec-num">Recommendation 02</span>
+          <div class="rec-title">App redesign &#8212; from top-down broadcast to peer-driven events</div>
+        </div>
+        <div class="rec-body">
+          <p>The existing Industrious app events feature felt like a newsletter &#8212; one-directional, managed by the company, disconnected from member interests. Members found it underused and impersonal.</p>
+          <p>We proposed shifting the events feature to allow members to host their own events around their actual interests. An interest-matching onboarding flow would connect people with similar hobbies or professional focuses, and event creation would be peer-initiated &#8212; making community-building something members do with each other using Industrious as the platform, not the host.</p>
+        </div>
+      </div>
+
+      <div class="img-grid-2">
+        <div class="img-placeholder"><span class="img-caption">Current app &#8212; top-down, newsletter-style events</span></div>
+        <div class="img-placeholder"><span class="img-caption">Proposed &#8212; peer event creation with interest matching</span></div>
+      </div>
+
+      <div class="rec-block">
+        <div class="rec-header">
+          <span class="rec-num">Recommendation 03</span>
+          <div class="rec-title">Nuanced space &#8212; designing for the in-between state</div>
+        </div>
+        <div class="rec-body">
+          <p>Current spatial design offers a binary: focus space (quiet, isolated) or collaboration space (open, social). Our research revealed a third need &#8212; workers who want ambient presence without social obligation. They want the energy of people nearby without the expectation to interact.</p>
+          <p>We proposed a &#8220;nuanced space&#8221; &#8212; a zone positioned between focus and collaboration that communicates a specific kind of availability through spatial design alone (arrangement, sightlines, partial enclosure). The environment itself would signal &#8220;I&#8217;m here, I&#8217;m aware, but I&#8217;m working&#8221; &#8212; without headphones or verbal signaling required.</p>
+        </div>
+      </div>
+
+      <div class="img-wide">
+        <div class="img-placeholder"><span class="img-caption">Nuanced space concept &#8212; a third zone between focus and collaboration</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="reflection">
+      <div class="section-label">Reflection</div>
+      <h2>What this project changed about how I approach research</h2>
+      <ul class="numbered-list">
+        <li><span class="num">1</span><div><span class="item-head">The problem people describe isn&#8217;t always the problem they have.</span>Low event attendance looks like a marketing or awareness problem. It&#8217;s actually a psychological safety problem. Getting to that required letting go of the surface explanation and following the data further. Affinity mapping made the pattern visible in a way individual interviews hadn&#8217;t.</div></li>
+        <li><span class="num">2</span><div><span class="item-head">Designing for behavior that already exists beats designing for behavior you want.</span>Coffee conversations, elevator small talk, and lunch chats were already happening. The most effective recommendations weren&#8217;t about creating new behaviors &#8212; they were about lowering the barrier to behaviors people were already inclined toward.</div></li>
+        <li><span class="num">3</span><div><span class="item-head">The in-between is always worth naming.</span>Most design defaults to binary states &#8212; focused or collaborative, private or social. But people often live in the middle. If the environment forces a choice they don&#8217;t want to make, they disengage. Naming the in-between state gave us a frame that led directly to Recommendation 3.</div></li>
+        <li><span class="num">4</span><div><span class="item-head">Research deliverables are also design artifacts.</span>We were delivering findings to a real client. How we structured the insights, framed the themes, and presented the recommendations was itself a design problem &#8212; one that required the same attention to clarity and narrative as any visual deliverable.</div></li>
+      </ul>
+
+      <div class="next-project">
+        <div class="next-project-label">Next Project</div>
+        <a href="case-study-3.html" class="next-project-card">
+          <div class="next-project-thumb">
+            <img src="assets/images/jb-hero.jpg" alt="Jubo DC">
+          </div>
+          <div class="next-project-info">
+            <div class="next-project-body">
+              <div class="next-project-title">Jubo DC</div>
+              <div class="next-project-desc">Helping daycare institution staff schedule and record patient care without the paperwork burden.</div>
+              <div class="next-project-meta">
+                <span class="tag">UX Research</span>
+                <span class="tag">Product Design</span>
+                <span class="next-project-year">2024</span>
+              </div>
+            </div>
+            <span class="next-project-arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Sophie Lee © 2026</span>
+    <div class="footer-contact">
+      <button class="footer-email" onclick="copyEmail(this)" aria-label="Copy email address">
+        ylee32@sva.edu
+        <span class="copy-hint">click to copy</span>
+        <span class="copy-confirm">copied!</span>
+      </button>
+      <a href="https://www.linkedin.com/in/yi-hsuan-lee-ab3321158/" target="_blank" class="footer-linkedin">LinkedIn ↗</a>
+    </div>
+  </footer>
+</div><!-- /page-wrap -->
+
+<script>
+  const bar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 10); });
+  const navItems = document.querySelectorAll('.nav-item[data-section]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) navItems.forEach(item => item.classList.toggle('active', item.dataset.section === entry.target.id));
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+<script src="assets/js/skeleton.js" defer></script>
+</body>
+</html>

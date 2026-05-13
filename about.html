@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Sophie Lee</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Oswald:wght@700&family=Playfair+Display:ital,wght@0,900;1,900&family=Permanent+Marker&family=Caveat:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-Extralight.woff2') format('woff2'); font-weight:200; font-style:normal; font-display:block; }
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2'); font-weight:200; font-style:italic; font-display:block; }
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:block; }
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2'); font-weight:400; font-style:italic; font-display:block; }
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-SemiBold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:block; }
+    @font-face { font-family:'PP Mori'; src:url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2'); font-weight:600; font-style:italic; font-display:block; }
+
+    /* ── TOKENS ── */
+    :root {
+      --black:#111; --dark:#333; --mid:#666; --muted:#999;
+      --subtle:#ccc; --border:#e5e5e5; --surface:#f5f5f5; --white:#fff;
+      --font:'PP Mori', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family: var(--font);
+      background:
+        radial-gradient(ellipse 800px 700px at calc(100% + 80px) -120px, rgba(255,155,70,0.35), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -100px 18%, rgba(255,215,90,0.25), transparent 68%),
+        radial-gradient(ellipse 600px 520px at 88% 42%, rgba(255,120,80,0.18), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -60px 68%, rgba(255,190,100,0.22), transparent 68%),
+        var(--white);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+    a { text-decoration:none; color:inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position:sticky; top:0; z-index:100;
+      background: var(--white);
+      border-bottom:1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
+    .nav-inner {
+      max-width:1100px; margin:0 auto; padding:0 48px;
+      height:52px; display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-name { font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; }
+    .nav-links { display:flex; align-items:center; gap:32px; }
+    .nav-links a { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); transition:color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--black); }
+    .nav-resume {
+      border:1px solid var(--border); border-radius:999px;
+      padding:5px 12px; font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+      color:var(--muted); transition:border-color 0.15s, color 0.15s;
+    }
+    .nav-resume:hover { border-color:#ccc; color:var(--black); }
+
+    /* ── INTRO HERO ── */
+    .intro-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 64px 48px 0;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .intro-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f0f0f0;
+    }
+    .intro-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: grayscale(100%);
+    }
+    .intro-bio {
+      padding-top: 8px;
+    }
+    .intro-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .intro-name {
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+    .intro-text {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--dark);
+      max-width: 520px;
+    }
+    .intro-text p + p { margin-top: 18px; }
+    .intro-text em {
+      font-style: normal;
+      color: var(--black);
+      font-weight: 500;
+    }
+    .intro-divider {
+      max-width: 1100px;
+      margin: 56px auto 0;
+      padding: 0 48px;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .intro-section {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 40px 20px 0;
+      }
+      .intro-photo { max-width: 200px; }
+      .intro-divider { padding: 0 20px; margin-top: 40px; }
+    }
+
+    /* ── COLLAGE LAYOUT ── */
+    .collage-page {
+      max-width:1200px; margin:0 auto;
+      padding:0 40px 160px;
+    }
+    .collage-stage {
+      position:relative;
+      min-height:1000px;
+    }
+
+    /* ── COLLAGE ITEMS ── */
+    .collage-item {
+      position:absolute;
+      cursor:pointer;
+      transform: rotate(var(--rot, 0deg));
+      transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+      will-change: transform;
+    }
+    .collage-item:hover {
+      transform: rotate(calc(var(--rot, 0deg) + 2.5deg)) scale(1.03);
+      z-index: 10;
+    }
+    .collage-item img {
+      display:block;
+      width: var(--w, 260px);
+      max-width:100%;
+      box-shadow: 2px 4px 18px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .collage-item img[alt="Camera"],
+    .collage-item img[alt="A letter for you"] {
+      box-shadow: none;
+    }
+    .collage-caption {
+      font-size:13px; color:var(--dark);
+      margin-top:9px; line-height:1.5;
+      max-width: var(--w, 260px);
+      font-family: var(--font); font-weight:400;
+    }
+
+    /* ── POPUP CARD (speech bubble, auto-dismiss) ── */
+    .popup-card {
+      position:fixed; z-index:500;
+      background:#faf7f0;
+      border:1px solid rgba(160,120,80,0.18);
+      border-radius:14px;
+      padding:14px 18px;
+      max-width:260px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+      font-family:'Caveat', cursive; font-size:17px;
+      color:#3d2c1e; line-height:1.65;
+      transform:rotate(-1deg);
+      pointer-events:none;
+      opacity:1;
+      transition: opacity 0.5s ease;
+    }
+    .popup-card.fading { opacity:0; }
+    /* speech bubble tail */
+    .popup-card.tail-left::before {
+      content:''; position:absolute; left:-11px; top:18px;
+      border:11px solid transparent;
+      border-right-color:rgba(160,120,80,0.18);
+    }
+    .popup-card.tail-left::after {
+      content:''; position:absolute; left:-9px; top:19px;
+      border:10px solid transparent;
+      border-right-color:#faf7f0;
+    }
+    .popup-card.tail-right::before {
+      content:''; position:absolute; right:-11px; top:18px;
+      border:11px solid transparent;
+      border-left-color:rgba(160,120,80,0.18);
+    }
+    .popup-card.tail-right::after {
+      content:''; position:absolute; right:-9px; top:19px;
+      border:10px solid transparent;
+      border-left-color:#faf7f0;
+    }
+
+    /* ── ENVELOPE MODAL ── */
+    .env-overlay {
+      position:fixed; inset:0; z-index:9000;
+      background:rgba(30,20,10,0.55);
+      display:flex; align-items:flex-start; justify-content:center;
+      overflow-y:auto;
+      padding: 48px 0 80px;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.35s ease;
+    }
+    .env-overlay.open { opacity:1; pointer-events:auto; }
+
+    .env-scene {
+      position:relative;
+      width:520px;
+      display:flex; flex-direction:column; align-items:center;
+      gap:20px;
+    }
+
+    /* Envelope wrapper: stacks layers */
+    .env-img-wrap {
+      position:relative;
+      width:100%;
+    }
+    /* The base envelope photo */
+    .env-img-closed {
+      width:100%; display:block;
+      border-radius:4px;
+      position:relative; z-index:3;
+    }
+
+    /* Letter slides up from below; full natural height, no clipping */
+    .env-letter-wrap {
+      position:absolute;
+      left:6%; right:6%;
+      top:5%;
+      z-index:4;
+      transform: translateY(105%);
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .env-overlay.step-letter .env-letter-wrap { transform: translateY(0); }
+
+    /* Letter card */
+    .letter-card {
+      background:#faf8f2;
+      padding:28px 30px 32px;
+      font-family:'Special Elite', 'Courier Prime', monospace; font-size:14px;
+      color:#2a2015; line-height:1.85;
+      border-radius:2px 2px 0 0;
+      /* ruled lines */
+      background-image:
+        repeating-linear-gradient(
+          transparent, transparent 30px,
+          rgba(160,120,80,0.10) 30px, rgba(160,120,80,0.10) 31px
+        );
+      background-position:0 26px;
+    }
+    .letter-card p + p { margin-top:4px; }
+    .letter-card .letter-sig { margin-top:20px; font-size:15px; }
+
+    /* Letter text fade in */
+    .letter-card { opacity:0; transition:opacity 0.6s ease 0.4s; }
+    .env-overlay.step-text .letter-card { opacity:1; }
+
+    /* Close button */
+    .env-close-btn {
+      background:rgba(255,255,255,0.15);
+      border:1px solid rgba(255,255,255,0.4);
+      border-radius:999px;
+      padding:8px 22px; cursor:pointer;
+      font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+      color:#fff; font-family: var(--font);
+      transition: background 0.15s;
+    }
+    .env-close-btn:hover { background:rgba(255,255,255,0.28); }
+  </style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html">Work</a>
+      <a href="about.html" class="active">About</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── INTRO: PHOTO + BIO ── -->
+<div class="intro-section">
+  <div class="intro-photo">
+    <img src="assets/images/sophie-portrait.jpg" alt="Sophie Lee" />
+  </div>
+  <div class="intro-bio">
+    <p class="intro-eyebrow">About</p>
+    <h1 class="intro-name">Sophie Lee</h1>
+    <div class="intro-text">
+      <p>I'm an <em>Interaction Designer</em> with a background in <em>healthcare and enterprise product design</em>. Before coming to New York, I spent two years at Jubo — a B2B healthcare platform — where I designed tools for daycare staff managing patient records and scheduling. It's where I learned that the real design problem is rarely the interface itself.</p>
+      <p>I'm currently pursuing an <em>MFA in Interaction Design at SVA</em>, deepening my practice in service design, assistive technology, and the spaces where design decisions have genuine human stakes. I'm drawn to problems that involve <em>complex systems, vulnerable users, and the messy in-between</em> — places most tools haven't reached yet.</p>
+      <p>Outside of projects, I think a lot about how physical spaces shape social behavior, why useful things often go unused, and how to make research feel less extractive.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="intro-divider" />
+
+<!-- ── COLLAGE ── -->
+<div class="collage-page">
+  <div class="collage-stage">
+
+    <!-- 1. CAT -->
+    <div class="collage-item"
+         style="--rot:-3deg; --w:258px; left:6%; top:190px"
+         data-popup="cat">
+      <img src="assets/images/personalpage-cat.png" alt="Cat">
+      <p class="collage-caption">I like cats but sadly I couldn't have one now.</p>
+    </div>
+
+    <!-- 2. JEWELRY / CRAFT WORK -->
+    <div class="collage-item"
+         style="--rot:2deg; --w:240px; left:38%; top:45px"
+         data-popup="jewelry">
+      <img src="assets/images/personalpage-taiwan.png" alt="Jewelry">
+      <p class="collage-caption">I care about how my work relates to the country.</p>
+    </div>
+
+    <!-- 3. HACKATHON -->
+    <div class="collage-item"
+         style="--rot:-1.5deg; --w:218px; left:36%; top:440px"
+         data-popup="hackathon">
+      <img src="assets/images/personalpage-hackathon.png" alt="Hackathon">
+      <p class="collage-caption">I like hackathons to make stupid things.</p>
+    </div>
+
+    <!-- 4. RASPBERRY PI -->
+    <div class="collage-item"
+         style="--rot:2.5deg; --w:255px; left:8%; top:610px"
+         data-popup="rpi">
+      <img src="assets/images/personalpage-rpi.png" alt="Raspberry Pi">
+      <p class="collage-caption">I like playing projects with Raspberry Pi!</p>
+    </div>
+
+    <!-- 5. CAMERA -->
+    <div class="collage-item"
+         style="--rot:-2deg; --w:245px; left:63%; top:560px"
+         data-popup="camera">
+      <img src="assets/images/personalpage-camera.png" alt="Camera">
+      <p class="collage-caption">I like to take photos. Click to see my gallery!</p>
+    </div>
+
+    <!-- 6. ENVELOPE / LETTER -->
+    <div class="collage-item"
+         style="--rot:1.5deg; --w:320px; left:61%; top:135px"
+         id="letter-item">
+      <img src="assets/images/personalpage-%20letter1.png" alt="A letter for you">
+      <p class="collage-caption">This is a Letter for you. Click to open it.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── POPUP CARD ── -->
+<div class="popup-card" id="popup-card" style="display:none; left:0; top:0">
+  <p id="popup-text"></p>
+</div>
+
+<!-- ── ENVELOPE MODAL ── -->
+<div class="env-overlay" id="env-overlay">
+  <div class="env-scene">
+
+    <div class="env-img-wrap">
+      <!-- Letter (behind, slides up) -->
+      <div class="env-letter-wrap">
+        <div class="letter-card" id="letter-card">
+          <p>Dear visitor,</p>
+          <p>&nbsp;</p>
+          <p>I'm Sophie — an Interaction Designer with a background in healthcare and enterprise product design.</p>
+          <p>&nbsp;</p>
+          <p>Before coming to New York, I spent two years at Jubo — a B2B healthcare platform — designing tools for daycare staff managing patient records and scheduling. That's where I learned the real design problem is rarely the interface itself.</p>
+          <p>&nbsp;</p>
+          <p>I'm currently pursuing an MFA in Interaction Design at SVA, deepening my practice in service design, assistive technology, and the spaces where design decisions have genuine human stakes.</p>
+          <p>&nbsp;</p>
+          <p>I'm drawn to problems involving complex systems, vulnerable users, and the messy in-between — places most tools haven't reached yet.</p>
+          <p>&nbsp;</p>
+          <p>Outside of projects, I think about how physical spaces shape social behavior, why useful things often go unused, and how to make research feel less extractive.</p>
+          <p class="letter-sig">With curiosity,<br>Sophie +</p>
+        </div>
+      </div>
+
+      <!-- Envelope shown when opened -->
+      <img class="env-img-closed" src="assets/images/personalpage-letter2.png" alt="Envelope" id="env-img-closed">
+    </div>
+
+    <button class="env-close-btn" id="env-close-btn">× Close letter</button>
+  </div>
+</div>
+
+<script>
+  /* ── NAV scroll ── */
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  /* ── POPUP DATA ── */
+  var popupData = {
+    cat:      "Her name would've been Mochi. My landlord said no. I'm still not over it.",
+    jewelry:  "I grew up watching my grandmother make things by hand. It taught me that design is never separate from culture.",
+    hackathon:"My best projects started as jokes. There's something freeing about building with zero expectations.",
+    rpi:      "I once built a doorbell that texted me a haiku. It worked twice. I considered it a success.",
+    camera:   "Photography taught me to slow down and notice. I mostly shoot ordinary things that people walk past."
+  };
+
+  var popupCard = document.getElementById('popup-card');
+  var popupText = document.getElementById('popup-text');
+  var dismissTimer = null;
+  var fadeTimer = null;
+
+  function showPopup(text, rect) {
+    clearTimeout(dismissTimer);
+    clearTimeout(fadeTimer);
+    popupCard.classList.remove('fading');
+
+    popupText.textContent = text;
+
+    var pw = 268;
+    var px = rect.right + 16;
+    if (px + pw > window.innerWidth - 16) {
+      px = rect.left - pw - 16;
+      /* tail points right when bubble is to the left */
+      popupCard.classList.add('tail-right');
+      popupCard.classList.remove('tail-left');
+    } else {
+      popupCard.classList.add('tail-left');
+      popupCard.classList.remove('tail-right');
+    }
+    if (px < 16) px = 16;
+    var py = Math.max(rect.top, 80);
+    if (py + 120 > window.innerHeight) py = window.innerHeight - 140;
+
+    popupCard.style.left = px + 'px';
+    popupCard.style.top  = py + 'px';
+    popupCard.style.display = 'block';
+
+    /* auto-dismiss: fade after 3s, hide after fade */
+    dismissTimer = setTimeout(function () {
+      popupCard.classList.add('fading');
+      fadeTimer = setTimeout(function () {
+        popupCard.style.display = 'none';
+        popupCard.classList.remove('fading');
+      }, 500);
+    }, 3000);
+  }
+
+  document.querySelectorAll('[data-popup]').forEach(function (item) {
+    item.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showPopup(popupData[this.dataset.popup], this.getBoundingClientRect());
+    });
+  });
+
+  /* ── ENVELOPE ANIMATION ── */
+  var letterItem   = document.getElementById('letter-item');
+  var envOverlay   = document.getElementById('env-overlay');
+  var envCloseBtn  = document.getElementById('env-close-btn');
+  var animTimer    = [];
+
+  function openEnvelope() {
+    envOverlay.classList.add('open');
+
+    /* Step 1 (400ms): letter slides up */
+    animTimer.push(setTimeout(function () {
+      envOverlay.classList.add('step-letter');
+    }, 400));
+
+    /* Step 2 (900ms): text fades in */
+    animTimer.push(setTimeout(function () {
+      envOverlay.classList.add('step-text');
+    }, 900));
+  }
+
+  function closeEnvelope() {
+    animTimer.forEach(clearTimeout);
+    animTimer.length = 0;
+    envOverlay.classList.remove('open', 'step-letter', 'step-text');
+  }
+
+  letterItem.addEventListener('click', openEnvelope);
+  envCloseBtn.addEventListener('click', closeEnvelope);
+
+  /* click outside scene to close */
+  envOverlay.addEventListener('click', function (e) {
+    if (e.target === envOverlay) closeEnvelope();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TMS App — Case Study</title>
+  <style>
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Extralight.woff2') format('woff2');
+      font-weight: 200;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2');
+      font-weight: 200;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2');
+      font-weight: 600;
+      font-style: italic;
+      font-display: block;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text: #1a1a1a;
+      --muted: #999;
+      --border: #e8e8e8;
+      --bg: #ffffff;
+      --white: #ffffff;
+      --dark: #2a2a2a;
+      --mid: #666666;
+      --subtle: #cccccc;
+      --surface: #f5f5f5;
+      --sidebar-w: 210px;
+      --dot-active: #1a1a1a;
+      --dot-inactive: #d4d4d4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'PP Mori', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(ellipse 800px 700px at calc(100% + 80px) -120px, rgba(255, 155, 70, 0.40), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -100px 18%,              rgba(255, 215, 90, 0.30), transparent 68%),
+        radial-gradient(ellipse 600px 520px at 88%          42%,        rgba(255, 120, 80, 0.24), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -60px         68%,       rgba(255, 190, 100, 0.28), transparent 68%),
+        radial-gradient(ellipse 560px 480px at calc(100% - 80px) 84%,  rgba(255, 100, 90, 0.20), transparent 68%),
+        var(--bg);
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      transition: box-shadow 0.2s;
+    }
+    nav.scrolled { box-shadow: 0 1px 0 var(--border); }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+    .nav-resume {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px !important;
+      letter-spacing: 0.06em !important;
+      transition: border-color 0.15s, color 0.15s !important;
+    }
+    .nav-resume:hover { border-color: #ccc !important; color: var(--text) !important; }
+
+    .scroll-progress {
+      position: fixed;
+      top: 52px; left: 0;
+      height: 2px;
+      background: var(--text);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.08s linear;
+    }
+
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 52px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 52px;
+      align-self: flex-start;
+      flex-shrink: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - 52px);
+      padding: 36px 24px 36px 32px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .sidebar-meta { margin-bottom: 28px; }
+    .sidebar-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .nav-list { list-style: none; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 4px 0;
+    }
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--dot-inactive);
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-item.active .nav-dot {
+      background: var(--dot-active);
+      transform: scale(1.25);
+    }
+    .nav-item a {
+      font-size: 12px;
+      letter-spacing: 0.055em;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-item.active a,
+    .nav-item:hover a { color: var(--text); }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 52px clamp(24px, 5vw, 72px) 120px clamp(24px, 4vw, 56px);
+    }
+
+    .section {
+      padding-top: 72px;
+      padding-bottom: 8px;
+    }
+    .section:first-child { padding-top: 64px; }
+
+    .section-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-family: 'PP Mori', system-ui, sans-serif;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: clamp(18px, 1.9vw, 28px);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #3d3d3d;
+      margin-bottom: 20px;
+      max-width: 100%;
+      font-size: clamp(13px, 1vw, 15px);
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      background: #fafafa;
+    }
+    .callout-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .callout p {
+      margin: 0;
+      color: #2a2a2a;
+      font-size: clamp(15px, 1.1vw, 17px);
+      line-height: 1.65;
+      max-width: none;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin: 36px 0 40px;
+      max-width: 100%;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta-label {
+      font-size: clamp(10px, 0.8vw, 12px);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .meta-value {
+      font-size: clamp(14px, 1.1vw, 16px);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .numbered-list {
+      list-style: none;
+      margin: 22px 0;
+      max-width: 100%;
+    }
+    .numbered-list li {
+      display: flex;
+      gap: 18px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(15px, 1.1vw, 17px);
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .numbered-list li:first-child { border-top: 1px solid var(--border); }
+    .numbered-list .num {
+      flex-shrink: 0;
+      width: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      padding-top: 1px;
+    }
+    .numbered-list .item-head {
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .bullet-list {
+      list-style: none;
+      margin: 16px 0;
+      max-width: 100%;
+    }
+    .bullet-list li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(15px, 1.1vw, 17px);
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .bullet-list li:first-child { border-top: 1px solid var(--border); }
+    .bullet-list .bullet-dot {
+      flex-shrink: 0;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-top: 9px;
+    }
+    .bullet-list .bullet-head {
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .img-placeholder {
+      background: #f2f2f2;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px 18px;
+    }
+    .img-caption {
+      font-size: 11px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .img-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 28px 0;
+      max-width: 100%;
+    }
+    .img-grid-2 .img-placeholder { aspect-ratio: 4/3; }
+
+    .img-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin: 28px 0;
+      max-width: 100%;
+    }
+    .img-grid-3 .img-placeholder { aspect-ratio: 9/16; }
+
+    .img-wide {
+      max-width: 100%;
+      margin: 28px 0;
+    }
+    .img-wide .img-placeholder { aspect-ratio: 16/7; }
+
+    .project-header {
+      padding-bottom: 20px;
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 8px;
+    }
+    .project-header-name {
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .project-header-name a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .project-header-name a:hover { color: var(--text); }
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: #555;
+      white-space: nowrap;
+      background: #fafafa;
+    }
+    .project-year {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+    .project-subtitle {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+    }
+
+    .pull-quote {
+      border-left: 2px solid var(--text);
+      margin: 32px 0;
+      padding: 4px 0 4px 24px;
+      max-width: min(600px, 100%);
+    }
+    .pull-quote p {
+      font-size: clamp(17px, 1.6vw, 22px);
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0 0 8px;
+      max-width: none;
+    }
+    .pull-quote cite {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    .key-point {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      max-width: 100%;
+    }
+    .kp-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .key-point p {
+      font-size: clamp(14px, 1.1vw, 15px);
+      color: var(--text) !important;
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── FEATURE BLOCK ── */
+    /* ── Design Solution items ── */
+    .solution-item {
+      margin-top: 52px;
+      padding-top: 52px;
+      border-top: 1px solid var(--border);
+    }
+    .solution-item:first-of-type { margin-top: 32px; padding-top: 0; border-top: none; }
+    .solution-number {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .solution-title {
+      font-size: clamp(16px, 1.5vw, 21px);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-bottom: 16px;
+    }
+    .solution-desc {
+      font-size: clamp(13px, 1vw, 15px);
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 28px;
+      max-width: 640px;
+    }
+    .gif-demo {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      margin-top: 4px;
+    }
+    .gif-demo img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .hero-image { margin: 28px 0 0; }
+    .hero-image .img-placeholder {
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      background: #f0f0f0;
+      max-width: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 20px;
+    }
+
+    .next-project { margin-top: 52px; }
+    .next-project-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .next-project-card {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 100%;
+    }
+    .next-project-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .next-project-thumb {
+      width: 100%;
+      aspect-ratio: 16/5;
+      background: #f2f2f2;
+      overflow: hidden;
+    }
+    .next-project-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .next-project-info {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .next-project-body { display: flex; flex-direction: column; gap: 5px; }
+    .next-project-title {
+      font-size: clamp(15px, 1.3vw, 18px);
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .next-project-desc { font-size: 13px; color: var(--mid); line-height: 1.5; }
+    .next-project-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .next-project-year { font-size: 11px; color: var(--muted); padding-left: 2px; }
+    .next-project-arrow {
+      font-size: 18px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .next-project-card:hover .next-project-arrow {
+      color: var(--text);
+      transform: translateX(4px);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px clamp(24px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-name {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .footer-contact {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-email {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-email:hover { color: var(--black); }
+    .copy-hint {
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .footer-email:hover .copy-hint { opacity: 1; }
+    .copy-confirm {
+      position: absolute;
+      right: 0;
+      top: -26px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--black);
+      background: #efefef;
+      padding: 3px 8px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .footer-email.copied .copy-confirm { opacity: 1; }
+    .footer-linkedin {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-linkedin:hover { color: var(--black); }
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .footer-contact { gap: 16px; }
+    }
+
+    @media (max-width: 1024px) {
+      :root { --sidebar-w: 180px; }
+      .main { padding: 44px 40px 100px 40px; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 28px 24px 80px; }
+      .project-header-top { flex-direction: column; gap: 12px; }
+      .project-header-right { justify-content: flex-start; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .img-grid-2, .img-grid-3 { grid-template-columns: 1fr; }
+      footer { margin-left: 0; padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 24px; }
+      h2 { font-size: 16px; }
+      p  { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Work</a>
+      <a href="about.html">About</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+<div class="layout">
+
+  <aside class="sidebar">
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M8 2L4 6L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Projects
+    </a>
+    <div class="sidebar-meta">
+      <div class="sidebar-label">Case Study</div>
+      <div class="sidebar-title">TMS App</div>
+    </div>
+
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-section="overview">
+        <div class="nav-dot"></div>
+        <a href="#overview">Overview</a>
+      </li>
+      <li class="nav-item" data-section="background">
+        <div class="nav-dot"></div>
+        <a href="#background">Background</a>
+      </li>
+      <li class="nav-item" data-section="research">
+        <div class="nav-dot"></div>
+        <a href="#research">Research</a>
+      </li>
+      <li class="nav-item" data-section="design">
+        <div class="nav-dot"></div>
+        <a href="#design">Design Process</a>
+      </li>
+      <li class="nav-item" data-section="features">
+        <div class="nav-dot"></div>
+        <a href="#features">Features</a>
+      </li>
+      <li class="nav-item" data-section="reflection">
+        <div class="nav-dot"></div>
+        <a href="#reflection">Reflection</a>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <!-- PROJECT HEADER -->
+    <div class="project-header">
+      <div class="project-header-top">
+        <div class="project-header-name">
+          TMS App — Driver Experience
+          <a href="case-study.html" title="Next Project">→</a>
+        </div>
+        <div class="project-header-right">
+          <span class="tag">Mobile Design</span>
+          <span class="tag">0-to-1</span>
+          <span class="tag">Logistics</span>
+          <span class="project-year">2023</span>
+        </div>
+      </div>
+      <p class="project-subtitle">Empowering small-logistics drivers to record delivery progress on the go — without stopping, without paper, without losing track.</p>
+    </div>
+
+    <div class="hero-image">
+      <img src="assets/images/3d-hero.png"
+           alt="TMS App — delivery management interface overview"
+           style="width:100%; border-radius:12px;" />
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="section" id="overview">
+
+      <h1>Designing a logistics app for drivers who can't stop to use it — built around the constraints of driving, hauling goods, and working under unpredictable light.</h1>
+
+      <div class="callout">
+        <div class="callout-label">Design Challenge</div>
+        <p>The most critical phase of building this app wasn't the feature set — it was understanding the moment of use. Drivers are in motion, handling goods, managing daylight glare and nighttime screen brightness, all while trying to stay safe. The design had to work within those constraints, not around them.</p>
+      </div>
+
+      <div class="meta-grid">
+        <div>
+          <div class="meta-label">Role</div>
+          <div class="meta-value">UI/UX Designer<br>Internship</div>
+        </div>
+        <div>
+          <div class="meta-label">Timeline</div>
+          <div class="meta-value">2 months</div>
+        </div>
+        <div>
+          <div class="meta-label">Team</div>
+          <div class="meta-value">PM · Front-end Engineer · Back-end Engineer</div>
+        </div>
+        <div>
+          <div class="meta-label">Company</div>
+          <div class="meta-value">3drens Inc.<br>SaaS Logistics Platform</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- BACKGROUND -->
+    <section class="section" id="background">
+      <div class="section-label">Background</div>
+      <h2>From paper records to real-time visibility</h2>
+
+      <p>3drens Inc. is a SaaS company building logistics management tools for small and medium-sized logistics companies in Taiwan. The TMS (Transportation Management System) App is one of their core products — the mobile counterpart to the web-based management dashboard used by logistics managers.</p>
+
+      <p>Before the app, drivers tracked deliveries on paper: handwritten logs, signed receipts, manually collected at the end of each shift. This created a visibility gap for managers — they had no way to know delivery status until drivers returned to base. Exceptions, failed deliveries, and status updates couldn't be communicated until hours after they happened.</p>
+
+      <p>The business goal was clear: complete the MVP and ship it within a month to enable initial customer adoption. My job was to translate that urgency into a product that drivers would actually use — not reluctantly tolerate.</p>
+
+      <div class="callout">
+        <div class="callout-label">Business Goal</div>
+        <p>Complete design and MVP development within a month, enabling rapid launch for customer use. The app needed to connect drivers and logistics managers in real time — making delivery status, exceptions, and confirmations visible as they happened.</p>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="section" id="research">
+      <div class="section-label">Research</div>
+      <h2>The phone is the last thing a driver wants to deal with</h2>
+
+      <p>Before designing any screens, I needed to understand the physical reality of a driver's day. Secondary research on logistics worker behavior, combined with internal interviews with the operations team, surfaced a consistent picture.</p>
+
+      <ul class="bullet-list">
+        <li>
+          <div class="bullet-dot"></div>
+          <div>
+            <span class="bullet-head">One-handed operation is the default</span>
+            Drivers are constantly switching between driving, handling packages, and coordinating with recipients. Their hands are rarely free. Any interaction requiring two hands or sustained attention is a friction point — and a safety risk.
+          </div>
+        </li>
+        <li>
+          <div class="bullet-dot"></div>
+          <div>
+            <span class="bullet-head">Outdoor screens are hard to read in both extremes</span>
+            Under direct sunlight, low-contrast or small-text interfaces become unreadable. At night, a fully bright screen is blinding in the cab of a vehicle. The app had to perform in both conditions without manual adjustment.
+          </div>
+        </li>
+        <li>
+          <div class="bullet-dot"></div>
+          <div>
+            <span class="bullet-head">The adjustment period is the highest-risk phase</span>
+            Introducing any new tool into a driver's workflow creates friction during adoption. If the app required more cognitive load than paper in the first week, drivers would abandon it. The onboarding experience and task flow needed to feel immediately intuitive — not just eventually learnable.
+          </div>
+        </li>
+      </ul>
+
+      <div class="key-point">
+        <span class="kp-label">Design Question</span>
+        <p>How can we enable drivers to record delivery status in unpredictable delivery scenarios — without creating new risks or interruptions to their core job?</p>
+      </div>
+
+      <p>From this, I mapped the key moments in a driver's daily workflow where recording was required: vehicle check-in at the start of shift, route planning before departure, package-by-package delivery confirmation throughout the day, exception handling (failed deliveries, recipient unavailable), and end-of-day return. These moments became the skeleton of the app's information architecture.</p>
+
+      <div class="img-wide">
+        <img src="assets/images/3d-userflow.png"
+             alt="User flow mapping — key recording moments in a driver's daily workflow"
+             style="width:100%; border-radius:10px;" />
+      </div>
+    </section>
+
+    <!-- DESIGN PROCESS -->
+    <section class="section" id="design">
+      <div class="section-label">Design Process</div>
+      <h2>Fast alignment, then structure, then screens</h2>
+
+      <p>Given the one-month timeline, the design process had to be tight. I ran three overlapping phases in parallel rather than sequentially.</p>
+
+      <ul class="numbered-list">
+        <li>
+          <span class="num">1</span>
+          <div>
+            <span class="item-head">Hand-drawn wireframes for rapid team alignment</span>
+            I started with paper sketches rather than Figma — not to save time, but to keep discussion at the concept level before committing to layout. This meant the team could challenge structural decisions early, before I'd invested hours making them look polished.
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div>
+            <span class="item-head">Information architecture before interface design</span>
+            I built out the IA in full before designing individual screens. With nearly 50 states and edge cases to account for (vehicle types, multi-stop routes, exception categories), having a shared map of the product prevented inconsistencies in naming, flow, and navigation.
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <span class="item-head">Conceptual sketches to communicate element hierarchy</span>
+            Once the IA was agreed upon, I moved to medium-fidelity sketches that showed the spatial layout of each screen — where primary actions sat, how secondary information was deprioritised, and what the tap target hierarchy looked like. Engineers used these to begin frontend scaffolding in parallel with my visual design work.
+          </div>
+        </li>
+      </ul>
+
+      <div class="img-wide">
+        <img src="assets/images/3d-ia.png"
+             alt="Information architecture — full app structure"
+             style="width:100%; border-radius:10px;" />
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="section-label">Design Solution</div>
+      <h2>Three features, one coherent daily workflow</h2>
+      <p>Every screen maps to a specific moment in the driver's day. The goal wasn't to add capability — it was to replace the mental overhead of paper record-keeping with something that required less attention, not more.</p>
+
+      <!-- 01 -->
+      <div class="solution-item">
+        <div class="solution-number">01</div>
+        <div class="solution-title">Log in and select vehicle for pickup</div>
+        <p class="solution-desc">Before any delivery begins, drivers log vehicle information for the day — which vehicle, current mileage. Once submitted, the system marks the vehicle as "in use" and unlocks the rest of the app. This prevents data attribution errors when multiple drivers share vehicles, and gives managers a clean usage record without a separate tracking system.</p>
+        <div class="gif-demo">
+          <img src="assets/images/3d-design1.gif" alt="Vehicle login and pickup selection">
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="solution-item">
+        <div class="solution-number">02</div>
+        <div class="solution-title">Switch between map and list to navigate delivery routes</div>
+        <p class="solution-desc">Drivers control their own delivery sequence — as long as everything gets done within the window. The route view offers map and list modes: the map shows optimized route suggestions and color-coded sequence markers; the list shows task details, estimated times, and a direct call button for recipient contact. Drivers switch based on context — map when orienting, list when executing.</p>
+        <div class="gif-demo">
+          <img src="assets/images/3d-design2.gif" alt="Map and list route navigation">
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="solution-item">
+        <div class="solution-number">03</div>
+        <div class="solution-title">Complete delivery tasks and record package status</div>
+        <p class="solution-desc">This replaces the paper signature and handwritten record entirely. For each package, drivers confirm delivery, photograph proof-of-receipt, and flag exceptions — all from a single screen designed to be completed without sustained attention. Managers see status updates in real time, eliminating the end-of-day information blackout that paper records created.</p>
+        <div class="gif-demo">
+          <img src="assets/images/3d-design3.gif" alt="Delivery confirmation and package status recording">
+        </div>
+      </div>
+
+    </section>
+
+    <!-- REFLECTION -->
+    <section class="section" id="reflection">
+      <div class="section-label">Reflection</div>
+      <h2>What a two-month internship taught me about shipping under pressure</h2>
+
+      <ul class="numbered-list">
+        <li>
+          <span class="num">1</span>
+          <div>
+            <span class="item-head">Validate assumptions even without clients in the room.</span>
+            We had no direct access to drivers during the design phase. But that didn't mean we had to guess — internal interviews with operations managers, secondary research on logistics worker behavior, and ongoing alignment with the PM gave us enough to make grounded decisions. The lesson wasn't "always get user access." It was: find every available proxy and use them rigorously.
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div>
+            <span class="item-head">Simplicity is the result of iteration, not the starting point.</span>
+            Early versions of the delivery task flow had too many steps and too many options. Each round of internal review pushed us to remove something. The final version is simpler not because we designed it that way first, but because we kept asking what could be cut without losing meaning. Good product design is a reduction process.
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <span class="item-head">Speed and quality aren't opposites — they require different tools.</span>
+            Shipping an MVP in a month sounds like it should mean cutting corners. In practice, it meant being more disciplined: clear IA before any screens, paper wireframes before Figma, and parallel workstreams so engineers weren't waiting on designers. The constraint forced a tighter process, not a worse one.
+          </div>
+        </li>
+      </ul>
+
+      <!-- NEXT PROJECT — loop back to project 1 -->
+      <div class="next-project">
+        <div class="next-project-label">Next Project</div>
+        <a href="case-study.html" class="next-project-card">
+          <div class="next-project-thumb">
+            <img src="assets/images/vl-hero.JPG" alt="VoiceLamp">
+          </div>
+          <div class="next-project-info">
+            <div class="next-project-body">
+              <div class="next-project-title">VoiceLamp</div>
+              <div class="next-project-desc">Giving elderly Mandarin-speaking users back control of their medication through a voice-guided Raspberry Pi label reader.</div>
+              <div class="next-project-meta">
+                <span class="tag">Accessibility</span>
+                <span class="tag">Hardware</span>
+                <span class="next-project-year">2024</span>
+              </div>
+            </div>
+            <span class="next-project-arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Sophie Lee © 2026</span>
+    <div class="footer-contact">
+      <button class="footer-email" onclick="copyEmail(this)" aria-label="Copy email address">
+        ylee32@sva.edu
+        <span class="copy-hint">click to copy</span>
+        <span class="copy-confirm">copied!</span>
+      </button>
+      <a href="https://www.linkedin.com/in/yi-hsuan-lee-ab3321158/" target="_blank" class="footer-linkedin">LinkedIn ↗</a>
+    </div>
+  </footer>
+</div><!-- /page-wrap -->
+
+<script>
+  const bar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  const navItems = document.querySelectorAll('.nav-item[data-section]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.dataset.section === entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+<script src="assets/js/cs-skeleton.js"></script>
+<script src="assets/js/lightbox.js" defer></script>
+<script src="assets/js/skeleton.js" defer></script>
+<script src="assets/js/scroll-reveal.js" defer></script>
+</body>
+</html>

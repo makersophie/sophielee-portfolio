@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Care — Case Study</title>
+  <style>
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Extralight.woff2') format('woff2');
+      font-weight: 200;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-ExtralightItalic.woff2') format('woff2');
+      font-weight: 200;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-RegularItalic.woff2') format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'PP Mori';
+      src: url('assets/fonts/PPMori-SemiBoldItalic.woff2') format('woff2');
+      font-weight: 600;
+      font-style: italic;
+      font-display: block;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text: #1a1a1a;
+      --muted: #999;
+      --border: #e8e8e8;
+      --bg: #ffffff;
+      --white: #ffffff;
+      --dark: #2a2a2a;
+      --mid: #666666;
+      --subtle: #cccccc;
+      --surface: #f5f5f5;
+      --sidebar-w: 210px;
+      --dot-active: #1a1a1a;
+      --dot-inactive: #d4d4d4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'PP Mori', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(ellipse 800px 700px at calc(100% + 80px) -120px, rgba(255, 155, 70, 0.40), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -100px 18%,              rgba(255, 215, 90, 0.30), transparent 68%),
+        radial-gradient(ellipse 600px 520px at 88%          42%,        rgba(255, 120, 80, 0.24), transparent 68%),
+        radial-gradient(ellipse 680px 600px at -60px         68%,       rgba(255, 190, 100, 0.28), transparent 68%),
+        radial-gradient(ellipse 560px 480px at calc(100% - 80px) 84%,  rgba(255, 100, 90, 0.20), transparent 68%),
+        var(--bg);
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      transition: box-shadow 0.2s;
+    }
+    nav.scrolled { box-shadow: 0 1px 0 var(--border); }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+    .nav-resume {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px !important;
+      letter-spacing: 0.06em !important;
+      transition: border-color 0.15s, color 0.15s !important;
+    }
+    .nav-resume:hover { border-color: #ccc !important; color: var(--text) !important; }
+
+    /* ── SCROLL PROGRESS ── */
+    .scroll-progress {
+      position: fixed;
+      top: 52px; left: 0;
+      height: 2px;
+      background: var(--text);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.08s linear;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 52px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 52px;
+      align-self: flex-start;
+      flex-shrink: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - 52px);
+      padding: 36px 24px 36px 32px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .sidebar-meta { margin-bottom: 28px; }
+    .sidebar-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .nav-list { list-style: none; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 4px 0;
+    }
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--dot-inactive);
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-item.active .nav-dot {
+      background: var(--dot-active);
+      transform: scale(1.25);
+    }
+    .nav-item a {
+      font-size: 12px;
+      letter-spacing: 0.055em;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-item.active a,
+    .nav-item:hover a { color: var(--text); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 52px clamp(24px, 5vw, 72px) 120px clamp(24px, 4vw, 56px);
+    }
+
+    .section {
+      padding-top: 72px;
+      padding-bottom: 8px;
+    }
+    .section:first-child { padding-top: 64px; }
+
+    .section-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-family: 'PP Mori', system-ui, sans-serif;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: clamp(18px, 1.9vw, 28px);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #3d3d3d;
+      margin-bottom: 20px;
+      max-width: 100%;
+      font-size: clamp(13px, 1vw, 15px);
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      background: #fafafa;
+    }
+    .callout-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .callout p {
+      margin: 0;
+      color: #2a2a2a;
+      font-size: clamp(15px, 1.1vw, 17px);
+      line-height: 1.65;
+      max-width: none;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin: 36px 0 40px;
+      max-width: 100%;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta-label {
+      font-size: clamp(10px, 0.8vw, 12px);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .meta-value {
+      font-size: clamp(14px, 1.1vw, 16px);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .numbered-list {
+      list-style: none;
+      margin: 22px 0;
+      max-width: 100%;
+    }
+    .numbered-list li {
+      display: flex;
+      gap: 18px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(15px, 1.1vw, 17px);
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .numbered-list li:first-child { border-top: 1px solid var(--border); }
+    .numbered-list .num {
+      flex-shrink: 0;
+      width: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      padding-top: 1px;
+    }
+    .numbered-list .item-head {
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .img-placeholder {
+      background: #f2f2f2;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px 18px;
+    }
+    .img-caption {
+      font-size: 11px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .img-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 28px 0;
+      max-width: 100%;
+    }
+    .img-grid-2 .img-placeholder { aspect-ratio: 4/3; }
+
+    .img-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin: 28px 0;
+      max-width: 100%;
+    }
+    .img-grid-3 .img-placeholder { aspect-ratio: 4/3; }
+
+    .img-wide {
+      max-width: 100%;
+      margin: 28px 0;
+    }
+    .img-wide .img-placeholder { aspect-ratio: 16/7; }
+
+    /* ── PROJECT HEADER ── */
+    .project-header {
+      padding-bottom: 20px;
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 8px;
+    }
+    .project-header-name {
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .project-header-name a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .project-header-name a:hover { color: var(--text); }
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: #555;
+      white-space: nowrap;
+      background: #fafafa;
+    }
+    .project-year {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+    .project-subtitle {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 2px solid var(--text);
+      margin: 32px 0;
+      padding: 4px 0 4px 24px;
+      max-width: min(600px, 100%);
+    }
+    .pull-quote p {
+      font-size: clamp(17px, 1.6vw, 22px);
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0 0 8px;
+      max-width: none;
+    }
+    .pull-quote cite {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    /* ── KEY POINT ── */
+    .key-point {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 28px 28px;
+      margin: 32px 0;
+      max-width: 100%;
+    }
+    .kp-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .kp-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .kp-side {
+      padding: 0 24px 0 0;
+    }
+    .kp-side + .kp-side {
+      padding: 0 0 0 24px;
+      border-left: 1px solid var(--border);
+    }
+    .kp-side-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .key-point p {
+      font-size: clamp(14px, 1.1vw, 15px);
+      color: var(--text) !important;
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── USER STORY ── */
+    .user-story {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      max-width: 100%;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .us-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .us-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .us-need {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+    .us-need strong { color: var(--text); font-weight: 500; }
+
+    /* ── PAIN POINTS ── */
+    .pain-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .pain-point {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      position: relative;
+    }
+    .pain-point::before {
+      content: '"';
+      position: absolute;
+      top: 14px; right: 16px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+    }
+    .pp-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pain-point p {
+      font-size: clamp(13px, 1vw, 14px);
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      padding-right: 20px;
+      max-width: none;
+      font-style: italic;
+    }
+
+    .hero-image {
+      margin: 28px 0 0;
+    }
+    .hero-image .img-placeholder {
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      background: #f0f0f0;
+      max-width: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 20px;
+    }
+
+    /* ── NEXT PROJECT CARD ── */
+    .next-project { margin-top: 52px; }
+    .next-project-label {
+      font-size: clamp(11px, 0.9vw, 12px);
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .next-project-card {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 100%;
+    }
+    .next-project-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .next-project-thumb {
+      width: 100%;
+      aspect-ratio: 16/5;
+      background: #f2f2f2;
+    }
+    .next-project-info {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .next-project-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .next-project-title {
+      font-size: clamp(15px, 1.3vw, 18px);
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .next-project-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .next-project-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .next-project-year {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 2px;
+    }
+    .next-project-arrow {
+      font-size: 18px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .next-project-card:hover .next-project-arrow {
+      color: var(--text);
+      transform: translateX(4px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px clamp(24px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-name {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .footer-links { display: flex; gap: 28px; }
+    footer a {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 1024px) {
+      :root { --sidebar-w: 180px; }
+      .main { padding: 44px 40px 100px 40px; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 28px 24px 80px; }
+      .project-header-top { flex-direction: column; gap: 12px; }
+      .project-header-right { justify-content: flex-start; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .img-grid-2, .img-grid-3 { grid-template-columns: 1fr; }
+      .kp-row { grid-template-columns: 1fr; }
+      .kp-side + .kp-side { padding: 16px 0 0; border-left: none; border-top: 1px solid var(--border); }
+      footer { margin-left: 0; padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 24px; }
+      h2 { font-size: 16px; }
+      p  { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Sophie Lee</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Work</a>
+      <a href="about.html">About</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M8 2L4 6L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Projects
+    </a>
+    <div class="sidebar-meta">
+      <div class="sidebar-label">Case Study</div>
+      <div class="sidebar-title">Booking Care</div>
+    </div>
+
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-section="overview">
+        <div class="nav-dot"></div>
+        <a href="#overview">Overview</a>
+      </li>
+      <li class="nav-item" data-section="background">
+        <div class="nav-dot"></div>
+        <a href="#background">Background</a>
+      </li>
+      <li class="nav-item" data-section="research">
+        <div class="nav-dot"></div>
+        <a href="#research">Research</a>
+      </li>
+      <li class="nav-item" data-section="reframe">
+        <div class="nav-dot"></div>
+        <a href="#reframe">Reframe</a>
+      </li>
+      <li class="nav-item" data-section="design">
+        <div class="nav-dot"></div>
+        <a href="#design">Design</a>
+      </li>
+      <li class="nav-item" data-section="testing">
+        <div class="nav-dot"></div>
+        <a href="#testing">Testing</a>
+      </li>
+      <li class="nav-item" data-section="reflection">
+        <div class="nav-dot"></div>
+        <a href="#reflection">Reflection</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- PROJECT HEADER -->
+    <div class="project-header">
+      <div class="project-header-top">
+        <div class="project-header-name">
+          Booking Care
+          <a href="case-study.html" title="Next Project">→</a>
+        </div>
+        <div class="project-header-right">
+          <span class="tag">UX Research</span>
+          <span class="tag">0-to-1 Product</span>
+          <span class="tag">Healthcare</span>
+          <span class="project-year">2022</span>
+        </div>
+      </div>
+      <p class="project-subtitle">A dementia institution search platform — built from two rounds of research and one critical reframe.</p>
+    </div>
+
+    <!-- HERO IMAGE -->
+    <div class="hero-image">
+      <div class="img-placeholder">
+        <span class="img-caption">Booking Care — platform homepage and search interface</span>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="section" id="overview">
+
+      <h1>Helping families find the right dementia care institution — by surfacing how institutions actually care, not just that they exist.</h1>
+
+      <div class="callout">
+        <div class="callout-label">Starting Point</div>
+        <p>Every member of our team had watched a family member struggle with dementia care. That shared experience made us want to solve it right — which meant being willing to throw out our first answer when research showed us it was wrong.</p>
+      </div>
+
+      <div class="meta-grid">
+        <div>
+          <div class="meta-label">Role</div>
+          <div class="meta-value">UI/UX Designer<br>0-to-1 Product Design</div>
+        </div>
+        <div>
+          <div class="meta-label">Timeline</div>
+          <div class="meta-value">7 months<br>Oct 2021 – Apr 2022</div>
+        </div>
+        <div>
+          <div class="meta-label">Team</div>
+          <div class="meta-value">PM · Marketing Manager · UX Designer</div>
+        </div>
+        <div>
+          <div class="meta-label">Context</div>
+          <div class="meta-value">ST-TRANS ACTION AWARD<br>林口新創跨界超越競賽</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- BACKGROUND -->
+    <section class="section" id="background">
+      <div class="section-label">Background</div>
+      <h2>A problem every family faces, but no one had solved properly</h2>
+
+      <p>In Taiwan, finding the right dementia care institution is an overwhelming process. Information is scattered across government registries, outdated websites, and word of mouth. Families in crisis — already exhausted from caregiving — have no reliable way to compare institutions, understand what care they can provide, or know if they'll accept their family member at all.</p>
+
+      <p>Our team chose this problem because it was personal. All of us had watched a family member go through the search process. We knew the fatigue firsthand. What we didn't know yet was exactly what we should build — and that required us to go out and find out.</p>
+
+      <div class="img-wide">
+        <div class="img-placeholder">
+          <span class="img-caption">Early team workshop — mapping the problem space on Miro</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="section" id="research">
+      <div class="section-label">Research</div>
+      <h2>What caregivers actually said when we asked</h2>
+
+      <p>We ran two rounds of interviews — one with family caregivers, one with a lead operating a dementia institution. What we heard challenged the assumptions we'd walked in with.</p>
+
+      <p>From caregivers:</p>
+
+      <div class="pain-points-grid">
+        <div class="pain-point">
+          <span class="pp-label">Caregiver</span>
+          <p>"The information on the internet is too messy to find. I cannot find a dementia institution that can fulfill my need."</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Caregiver</span>
+          <p>"I was rejected by many institutions. They said my mother-in-law's situation is too complicated."</p>
+        </div>
+        <div class="pain-point">
+          <span class="pp-label">Caregiver</span>
+          <p>"I'm stressed out, but nobody understands my tiredness. I have no one to tell how hard it is to take care of a dementia patient day and night."</p>
+        </div>
+      </div>
+
+      <p>From the institution expert:</p>
+
+      <div class="callout">
+        <div class="callout-label">Expert Interview — Institution Lead</div>
+        <p>"Most of the time we accept requests. But when a patient has night wandering, or is in late-stage dementia, or needs three tubes — our capacity isn't enough even if we want to accept. We've seen so many primary family caregivers, mostly female, completely burn out. They can't stop, and it harms them physically and mentally."</p>
+      </div>
+
+      <p>The research painted a clear picture of two parallel frustrations: caregivers couldn't find the right institution, and institutions couldn't efficiently communicate what they could and couldn't accept.</p>
+    </section>
+
+    <!-- REFRAME -->
+    <section class="section" id="reframe">
+      <div class="section-label">Reframe</div>
+      <h2>We almost built the wrong thing</h2>
+
+      <p>Our first read of the data pointed strongly toward the emotional pain. Caregivers were exhausted, isolated, and overwhelmed. Our first HMW statement reflected that:</p>
+
+      <blockquote class="pull-quote">
+        <p>HMW design a product that helps dementia caregivers release their negative feelings?</p>
+      </blockquote>
+
+      <p>We ran with it. We brainstormed, ideated, and built a concept around emotional support and stress relief tools. Then we tested it.</p>
+
+      <p>The feedback was clarifying in a way we hadn't expected:</p>
+
+      <blockquote class="pull-quote">
+        <p>"Although you gave us ways to release stress — we still can't feel confident. We still have to go home and take care of them afterwards."</p>
+        <cite>— Concept testing participant</cite>
+      </blockquote>
+
+      <p>Releasing stress wasn't the real need. It was a symptom. The underlying need was confidence — the feeling that their family member was being well looked after, so they could finally stop worrying.</p>
+
+      <div class="key-point">
+        <span class="kp-label">The Reframe</span>
+        <div class="kp-row">
+          <div class="kp-side">
+            <span class="kp-side-label">HMW v1 (wrong)</span>
+            <p>How might we help dementia caregivers release their negative feelings?</p>
+          </div>
+          <div class="kp-side">
+            <span class="kp-side-label">HMW v2 (right)</span>
+            <p>How might we create an experience where caregivers feel confident that their family member is being well cared for?</p>
+          </div>
+        </div>
+      </div>
+
+      <p>This single reframe changed everything. An emotional support tool wouldn't solve it. What caregivers needed was a reliable way to find, evaluate, and connect with the right institution — one that matched their family member's specific situation and gave them visible proof of how care was delivered.</p>
+    </section>
+
+    <!-- DESIGN -->
+    <section class="section" id="design">
+      <div class="section-label">Design</div>
+      <h2>From competitive gap to product concept</h2>
+
+      <p>Before designing, I mapped every existing dementia care search platform in Taiwan — focusing on information architecture, filtering capabilities, and how institutions were represented. The gap was consistent across all of them: none offered matching based on specific care needs, and none showed caregivers what care actually looked like inside the institution.</p>
+
+      <div class="img-wide">
+        <div class="img-placeholder">
+          <span class="img-caption">Competitive analysis — 4 existing Taiwan platforms (長照地圖, U主長照, ALTC, 台北市聯合醫院)</span>
+        </div>
+      </div>
+
+      <p>The MVP had one job: get caregivers to the right institution faster, with enough information to feel confident before they ever picked up the phone. Three core features:</p>
+
+      <div class="user-story">
+        <div class="us-icon">👩</div>
+        <div>
+          <span class="us-label">User Goal</span>
+          <p class="us-need">"I need to find an institution that <strong>can actually accept my family member</strong>, and I need to be able to trust that they'll be taken care of properly."</p>
+        </div>
+      </div>
+
+      <h2 style="font-size: clamp(16px, 1.4vw, 20px); margin-top: 36px; margin-bottom: 12px;">① Filter for dementia needs</h2>
+      <p>Most platforms offered only location and price filters. We built a filtering system around the variables that actually determine eligibility: dementia severity (mild / moderate / severe), patient mobility, and eventually the three medical tubes (三管) — nasogastric tube, urinary catheter, and tracheostomy — which many institutions cannot support.</p>
+
+      <h2 style="font-size: clamp(16px, 1.4vw, 20px); margin-top: 36px; margin-bottom: 12px;">② Institution listings with real care evidence</h2>
+      <p>Search results showed institutions on a map alongside a list view with pricing, availability, and — critically — photos and videos of actual care environments. Not stock imagery. Real spaces, real routines. This was what made caregivers feel something they'd been missing: a sense of what life would actually look like for their family member there.</p>
+
+      <h2 style="font-size: clamp(16px, 1.4vw, 20px); margin-top: 36px; margin-bottom: 12px;">③ Online reservation form</h2>
+      <p>The path from "interested" to "scheduled a visit" required multiple phone calls on every existing platform. We simplified it to a single online form — submitting care needs, patient details, and preferred visit times in one step.</p>
+
+      <div class="img-grid-3">
+        <div class="img-placeholder">
+          <span class="img-caption">Filter for dementia needs — stage + condition filters</span>
+        </div>
+        <div class="img-placeholder">
+          <span class="img-caption">Institution listing — map + list with photos and pricing</span>
+        </div>
+        <div class="img-placeholder">
+          <span class="img-caption">Online reservation form</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTING -->
+    <section class="section" id="testing">
+      <div class="section-label">Testing &amp; Iteration</div>
+      <h2>What two weeks of testing taught us</h2>
+
+      <p>We tested the MVP with 2 caregivers and 1 institution lead. Both sides confirmed the core concept, but each gave us something specific to act on.</p>
+
+      <div class="callout">
+        <div class="callout-label">Caregiver Feedback</div>
+        <p>The filtering was useful, but what they wanted most wasn't just to find an institution — it was to understand how it would care for their family member. They wanted more visibility into the day-to-day.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Institution Feedback</div>
+        <p>The institution lead said it was the most complete information architecture they'd seen in any Taiwan platform. Their ask: make it even easier for institutions to show caregivers what they do.</p>
+      </div>
+
+      <p>Three changes shaped the final design from here:</p>
+
+      <ul class="numbered-list">
+        <li>
+          <span class="num">1</span>
+          <div>
+            <span class="item-head">Added 三管 (three tubes) to the filter</span>
+            A second round of interviews revealed that for many families, whether an institution could handle nasogastric tubes, urinary catheters, or tracheostomy tubes was the single most decisive factor. We rebuilt the filter system to surface this upfront.
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div>
+            <span class="item-head">Replaced staged photos with real care documentation</span>
+            Institutions don't have marketing budgets. Most couldn't produce polished photography. We redesigned the media section around authentic documentation — real staff interactions, real routines — which turned out to be more trustworthy to caregivers anyway.
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <span class="item-head">Added a guided matching test for first-timers</span>
+            For caregivers who didn't yet know the terminology — what stage is "moderate dementia"? what does 三管 mean? — we added a short diagnostic quiz that translated their situation into a recommended filter set, so they could start searching with confidence even without prior knowledge.
+          </div>
+        </li>
+      </ul>
+
+      <div class="img-grid-2">
+        <div class="img-placeholder">
+          <span class="img-caption">Final design — updated filter system including 三管 criteria</span>
+        </div>
+        <div class="img-placeholder">
+          <span class="img-caption">Matching test — guided onboarding for first-time caregivers</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFLECTION -->
+    <section class="section" id="reflection">
+      <div class="section-label">Reflection</div>
+      <h2>What this project taught me about asking the right question</h2>
+
+      <ul class="numbered-list">
+        <li>
+          <span class="num">1</span>
+          <div>
+            <span class="item-head">The right problem is not always the loudest one.</span>
+            Emotional pain was the most visible thing in our research. But the real unmet need was confidence — the sense that the situation was under control. Getting to that required concept testing, not just more interviews. Artifacts that fail tell you things that questions don't.
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div>
+            <span class="item-head">Reframing a HMW statement is a design decision.</span>
+            Changing from "release negative feelings" to "create confidence in care quality" wasn't just a wording change — it completely redirected the product. The willingness to throw out weeks of ideation because the framing was wrong is something I've carried into every project since.
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <span class="item-head">Both sides of a two-sided platform have to win.</span>
+            Designing for caregivers without designing for institutions would have created a platform institutions didn't participate in. The expert interview gave us the institutional perspective early enough to design around it, not accommodate it as an afterthought.
+          </div>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <div>
+            <span class="item-head">Authentic evidence beats polished presentation.</span>
+            Real care photos — imperfect, unstaged — built more trust with caregivers than anything else we tested. In high-stakes decisions, authenticity carries more weight than production value. That's a principle that extends well beyond this project.
+          </div>
+        </li>
+      </ul>
+
+      <div class="next-project">
+        <div class="next-project-label">Next Project</div>
+        <a href="case-study-6.html" class="next-project-card">
+          <div class="next-project-thumb"></div>
+          <div class="next-project-info">
+            <div class="next-project-body">
+              <div class="next-project-title">TMS App</div>
+              <div class="next-project-desc">Designing a logistics driver app for one-handed use, outdoor conditions, and a one-month ship date.</div>
+              <div class="next-project-meta">
+                <span class="tag">Mobile Design</span>
+                <span class="tag">0-to-1</span>
+                <span class="next-project-year">2023</span>
+              </div>
+            </div>
+            <span class="next-project-arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-name">Sophie Lee © 2026</span>
+  <div class="footer-links">
+    <a href="index.html">Work</a>
+    <a href="about.html">About</a>
+    <a href="mailto:ylee32@sva.edu">Email</a>
+  </div>
+</footer>
+</div><!-- /page-wrap -->
+
+<script>
+  const bar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  const navItems = document.querySelectorAll('.nav-item[data-section]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.dataset.section === id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+<script src="assets/js/skeleton.js" defer></script>
+</body>
+</html>
